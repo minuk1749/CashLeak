@@ -1,0 +1,290 @@
+[
+  {
+    "id": "gmail-3",
+    "mailbox": "gmail",
+    "date": "2026-05-07T17:00:14+09:00",
+    "from": "Google Payments <payments-noreply@google.com>",
+    "subject": "Google 주문 영수증 (2026. 5. 7.)",
+    "text": "주문해 주셔서 감사합니다.\nYouTube Premium (월간)\n판매자: Google LLC\n주문 번호: GPA.6194-3381\n결제 금액: ₩14,900/월\n다음 결제일: 2026. 6. 7."
+  },
+  {
+    "id": "gmail-4",
+    "mailbox": "gmail",
+    "date": "2026-05-09T14:48:14+09:00",
+    "from": "OpenAI <noreply@tm.openai.com>",
+    "subject": "Your receipt from OpenAI #2788-2364",
+    "text": "Receipt from OpenAI\nReceipt #2788-2364\nDate paid: May 9, 2026\nPayment method: Visa - 4821\n\nChatGPT Plus Subscription  Qty 1  $20.00\nSubtotal  $20.00\nAmount paid  $20.00"
+  },
+  {
+    "id": "gmail-5",
+    "mailbox": "gmail",
+    "date": "2026-05-10T10:56:11+09:00",
+    "from": "Disney+ <disneyplus@mail.disneyplus.com>",
+    "subject": "디즈니+ 결제 영수증",
+    "text": "디즈니+ 스탠다드 (월간 구독)\n결제일: 2026년 5월 10일\n결제 금액: 9,900원\n다음 결제일: 2026년 6월 10일"
+  },
+  {
+    "id": "gmail-6",
+    "mailbox": "gmail",
+    "date": "2026-05-17T20:11:33+09:00",
+    "from": "Netflix <info@mailer.netflix.com>",
+    "subject": "이번 주 넷플릭스 신작을 확인하세요",
+    "text": "새로운 시리즈가 공개되었습니다. 지금 시청하세요."
+  },
+  {
+    "id": "gmail-8",
+    "mailbox": "gmail",
+    "date": "2026-05-20T21:32:26+09:00",
+    "from": "밀리의 서재 <help@millie.co.kr>",
+    "subject": "[밀리의 서재] 정기결제 완료 안내",
+    "text": "월 정기구독 이용권 결제가 완료되었습니다.\n결제일: 2026-05-20\n결제금액: 9,900원\n다음 결제일: 2026-06-20"
+  },
+  {
+    "id": "gmail-12",
+    "mailbox": "gmail",
+    "date": "2026-05-23T22:37:28+09:00",
+    "from": "Apple <no_reply@email.apple.com>",
+    "subject": "Apple에서 발송한 영수증입니다",
+    "text": "영수증\nApple 계정: us***@naver.com\n청구일: 2026년 5월 23일\n주문 ID: M7656-2079\n\nBear\nBear Pro (월간)\n갱신일: 2026년 6월 22일\n₩2,500\n\n합계 ₩2,500"
+  },
+  {
+    "id": "gmail-14",
+    "mailbox": "gmail",
+    "date": "2026-06-07T09:32:38+09:00",
+    "from": "Google Payments <payments-noreply@google.com>",
+    "subject": "Google 주문 영수증 (2026. 6. 7.)",
+    "text": "주문해 주셔서 감사합니다.\nYouTube Premium (월간)\n판매자: Google LLC\n주문 번호: GPA.7833-2692\n결제 금액: ₩14,900/월\n다음 결제일: 2026. 7. 7."
+  },
+  {
+    "id": "gmail-15",
+    "mailbox": "gmail",
+    "date": "2026-06-09T18:47:06+09:00",
+    "from": "Netflix <info@mailer.netflix.com>",
+    "subject": "이번 주 넷플릭스 신작을 확인하세요",
+    "text": "새로운 시리즈가 공개되었습니다. 지금 시청하세요."
+  },
+  {
+    "id": "gmail-16",
+    "mailbox": "gmail",
+    "date": "2026-06-10T18:16:34+09:00",
+    "from": "Disney+ <disneyplus@mail.disneyplus.com>",
+    "subject": "디즈니+ 결제 영수증",
+    "text": "디즈니+ 스탠다드 (월간 구독)\n결제일: 2026년 6월 10일\n결제 금액: 9,900원\n다음 결제일: 2026년 7월 10일"
+  },
+  {
+    "id": "gmail-17",
+    "mailbox": "gmail",
+    "date": "2026-06-10T19:08:08+09:00",
+    "from": "OpenAI <noreply@tm.openai.com>",
+    "subject": "Your receipt from OpenAI #3450-2553",
+    "text": "Receipt from OpenAI\nReceipt #3450-2553\nDate paid: June 10, 2026\nPayment method: Visa - 4821\n\nChatGPT Plus Subscription  Qty 1  $20.00\nSubtotal  $20.00\nAmount paid  $20.00"
+  },
+  {
+    "id": "gmail-18",
+    "mailbox": "gmail",
+    "date": "2026-06-12T07:49:33+09:00",
+    "from": "Microsoft <microsoft-noreply@microsoft.com>",
+    "subject": "Microsoft 365 Personal 구독이 갱신되었습니다",
+    "text": "Microsoft 365 Personal (연간)\n결제일: 2026년 6월 12일\n금액: ₩89,000\n다음 청구일: 2027년 6월 12일"
+  },
+  {
+    "id": "gmail-21",
+    "mailbox": "gmail",
+    "date": "2026-06-20T09:35:11+09:00",
+    "from": "밀리의 서재 <help@millie.co.kr>",
+    "subject": "[밀리의 서재] 정기결제 완료 안내",
+    "text": "월 정기구독 이용권 결제가 완료되었습니다.\n결제일: 2026-06-20\n결제금액: 9,900원\n다음 결제일: 2026-07-20"
+  },
+  {
+    "id": "gmail-27",
+    "mailbox": "gmail",
+    "date": "2026-07-07T07:50:37+09:00",
+    "from": "Google Payments <payments-noreply@google.com>",
+    "subject": "Google 주문 영수증 (2026. 7. 7.)",
+    "text": "주문해 주셔서 감사합니다.\nYouTube Premium (월간)\n판매자: Google LLC\n주문 번호: GPA.6920-8235\n결제 금액: ₩14,900/월\n다음 결제일: 2026. 8. 7."
+  },
+  {
+    "id": "gmail-28",
+    "mailbox": "gmail",
+    "date": "2026-07-09T16:43:09+09:00",
+    "from": "OpenAI <noreply@tm.openai.com>",
+    "subject": "Your receipt from OpenAI #8956-1894",
+    "text": "Receipt from OpenAI\nReceipt #8956-1894\nDate paid: July 9, 2026\nPayment method: Visa - 4821\n\nChatGPT Plus Subscription  Qty 1  $20.00\nSubtotal  $20.00\nAmount paid  $20.00"
+  },
+  {
+    "id": "gmail-29",
+    "mailbox": "gmail",
+    "date": "2026-07-10T17:10:05+09:00",
+    "from": "Disney+ <disneyplus@mail.disneyplus.com>",
+    "subject": "디즈니+ 결제 영수증",
+    "text": "디즈니+ 스탠다드 (월간 구독)\n결제일: 2026년 7월 10일\n결제 금액: 9,900원\n다음 결제일: 2026년 8월 10일"
+  },
+  {
+    "id": "gmail-31",
+    "mailbox": "gmail",
+    "date": "2026-07-18T10:38:38+09:00",
+    "from": "Apple <no_reply@email.apple.com>",
+    "subject": "Apple에서 발송한 영수증입니다",
+    "text": "영수증\nApple 계정: us***@naver.com\n청구일: 2026년 7월 18일\n주문 ID: M8481-4774\n\nDuolingo\nDuolingo Super (월간)\n갱신일: 2026년 8월 18일\n₩13,000\n\n합계 ₩13,000"
+  },
+  {
+    "id": "gmail-32",
+    "mailbox": "gmail",
+    "date": "2026-07-20T14:42:11+09:00",
+    "from": "밀리의 서재 <help@millie.co.kr>",
+    "subject": "[밀리의 서재] 정기결제 완료 안내",
+    "text": "월 정기구독 이용권 결제가 완료되었습니다.\n결제일: 2026-07-20\n결제금액: 9,900원\n다음 결제일: 2026-08-20"
+  },
+  {
+    "id": "gmail-36",
+    "mailbox": "gmail",
+    "date": "2026-07-27T22:16:37+09:00",
+    "from": "Disney+ <disneyplus@mail.disneyplus.com>",
+    "subject": "디즈니+ 구독이 해지되었습니다",
+    "text": "구독 해지가 완료되었습니다.\n2026년 8월 10일까지 이용 가능합니다."
+  },
+  {
+    "id": "gmail-38",
+    "mailbox": "gmail",
+    "date": "2026-08-07T09:10:00+09:00",
+    "from": "Google Payments <payments-noreply@google.com>",
+    "subject": "Google 주문 영수증 (2026. 8. 7.)",
+    "text": "주문해 주셔서 감사합니다.\nYouTube Premium (월간)\n판매자: Google LLC\n주문 번호: GPA.2291-8883\n결제 금액: ₩14,900/월\n다음 결제일: 2026. 9. 7."
+  },
+  {
+    "id": "gmail-40",
+    "mailbox": "gmail",
+    "date": "2026-08-10T13:05:23+09:00",
+    "from": "OpenAI <noreply@tm.openai.com>",
+    "subject": "Your receipt from OpenAI #1491-5618",
+    "text": "Receipt from OpenAI\nReceipt #1491-5618\nDate paid: August 10, 2026\nPayment method: Visa - 4821\n\nChatGPT Plus Subscription  Qty 1  $20.00\nSubtotal  $20.00\nAmount paid  $20.00"
+  },
+  {
+    "id": "gmail-45",
+    "mailbox": "gmail",
+    "date": "2026-08-20T22:17:12+09:00",
+    "from": "밀리의 서재 <help@millie.co.kr>",
+    "subject": "[밀리의 서재] 정기결제 완료 안내",
+    "text": "월 정기구독 이용권 결제가 완료되었습니다.\n결제일: 2026-08-20\n결제금액: 9,900원\n다음 결제일: 2026-09-20"
+  },
+  {
+    "id": "gmail-47",
+    "mailbox": "gmail",
+    "date": "2026-08-22T14:20:07+09:00",
+    "from": "Apple <no_reply@email.apple.com>",
+    "subject": "Apple에서 발송한 영수증입니다",
+    "text": "영수증\nApple 계정: us***@naver.com\n청구일: 2026년 8월 22일\n주문 ID: M3504-9403\n\nBear\nBear Pro (월간)\n갱신일: 2026년 9월 22일\n₩2,500\n\n합계 ₩2,500"
+  },
+  {
+    "id": "gmail-49",
+    "mailbox": "gmail",
+    "date": "2026-08-27T10:24:19+09:00",
+    "from": "무신사 <news@musinsa.com>",
+    "subject": "[광고] 이번 주 회원 전용 특가",
+    "text": "최대 70% 할인\n쿠폰 5,000원 즉시 지급"
+  },
+  {
+    "id": "gmail-50",
+    "mailbox": "gmail",
+    "date": "2026-08-31T19:42:23+09:00",
+    "from": "Netflix <info@mailer.netflix.com>",
+    "subject": "이번 주 넷플릭스 신작을 확인하세요",
+    "text": "새로운 시리즈가 공개되었습니다. 지금 시청하세요."
+  },
+  {
+    "id": "gmail-52",
+    "mailbox": "gmail",
+    "date": "2026-09-05T09:53:33+09:00",
+    "from": "Netflix <info@account.netflix.com>",
+    "subject": "넷플릭스 멤버십 결제가 완료되었습니다",
+    "text": "고객님, 안녕하세요.\n넷플릭스 멤버십 요금이 결제되었습니다.\n\n멤버십: 스탠다드\n결제 금액: 17,000원\n결제일: 2026년 9월 5일\n다음 결제일: 2026년 10월 5일"
+  },
+  {
+    "id": "gmail-53",
+    "mailbox": "gmail",
+    "date": "2026-09-07T18:02:19+09:00",
+    "from": "Google Payments <payments-noreply@google.com>",
+    "subject": "Google 주문 영수증 (2026. 9. 7.)",
+    "text": "주문해 주셔서 감사합니다.\nYouTube Premium (월간)\n판매자: Google LLC\n주문 번호: GPA.2102-6269\n결제 금액: ₩14,900/월\n다음 결제일: 2026. 10. 7."
+  },
+  {
+    "id": "gmail-54",
+    "mailbox": "gmail",
+    "date": "2026-09-09T20:47:12+09:00",
+    "from": "OpenAI <noreply@tm.openai.com>",
+    "subject": "Your receipt from OpenAI #2607-4558",
+    "text": "Receipt from OpenAI\nReceipt #2607-4558\nDate paid: September 9, 2026\nPayment method: Visa - 4821\n\nChatGPT Plus Subscription  Qty 1  $20.00\nSubtotal  $20.00\nAmount paid  $20.00"
+  },
+  {
+    "id": "gmail-58",
+    "mailbox": "gmail",
+    "date": "2026-09-15T22:27:23+09:00",
+    "from": "네이버페이 <naverpay_noreply@navercorp.com>",
+    "subject": "[네이버페이] 정기결제가 완료되었습니다",
+    "text": "네이버플러스 멤버십 정기결제 안내\n결제일시: 2026.09.15 10:00\n결제금액: 4,900원\n결제수단: 신한카드\n다음 결제 예정일: 2026.10.15"
+  },
+  {
+    "id": "gmail-59",
+    "mailbox": "gmail",
+    "date": "2026-09-16T13:07:36+09:00",
+    "from": "Netflix <info@mailer.netflix.com>",
+    "subject": "이번 주 넷플릭스 신작을 확인하세요",
+    "text": "새로운 시리즈가 공개되었습니다. 지금 시청하세요."
+  },
+  {
+    "id": "gmail-60",
+    "mailbox": "gmail",
+    "date": "2026-09-20T08:20:20+09:00",
+    "from": "밀리의 서재 <help@millie.co.kr>",
+    "subject": "[밀리의 서재] 정기결제 완료 안내",
+    "text": "월 정기구독 이용권 결제가 완료되었습니다.\n결제일: 2026-09-20\n결제금액: 9,900원\n다음 결제일: 2026-10-20"
+  },
+  {
+    "id": "gmail-69",
+    "mailbox": "gmail",
+    "date": "2026-10-05T11:46:35+09:00",
+    "from": "Netflix <info@account.netflix.com>",
+    "subject": "넷플릭스 멤버십 결제가 완료되었습니다",
+    "text": "고객님, 안녕하세요.\n넷플릭스 멤버십 요금이 결제되었습니다.\n\n멤버십: 스탠다드\n결제 금액: 17,000원\n결제일: 2026년 10월 5일\n다음 결제일: 2026년 11월 5일"
+  },
+  {
+    "id": "gmail-70",
+    "mailbox": "gmail",
+    "date": "2026-10-07T12:37:04+09:00",
+    "from": "Google Payments <payments-noreply@google.com>",
+    "subject": "Google 주문 영수증 (2026. 10. 7.)",
+    "text": "주문해 주셔서 감사합니다.\nYouTube Premium (월간)\n판매자: Google LLC\n주문 번호: GPA.4874-6791\n결제 금액: ₩14,900/월\n다음 결제일: 2026. 11. 7."
+  },
+  {
+    "id": "gmail-71",
+    "mailbox": "gmail",
+    "date": "2026-10-08T22:43:36+09:00",
+    "from": "무신사 <news@musinsa.com>",
+    "subject": "[광고] 이번 주 회원 전용 특가",
+    "text": "최대 70% 할인\n쿠폰 5,000원 즉시 지급"
+  },
+  {
+    "id": "gmail-72",
+    "mailbox": "gmail",
+    "date": "2026-10-10T22:38:30+09:00",
+    "from": "OpenAI <noreply@tm.openai.com>",
+    "subject": "Your receipt from OpenAI #4702-6631",
+    "text": "Receipt from OpenAI\nReceipt #4702-6631\nDate paid: October 10, 2026\nPayment method: Visa - 4821\n\nChatGPT Plus Subscription  Qty 1  $20.00\nSubtotal  $20.00\nAmount paid  $20.00"
+  },
+  {
+    "id": "gmail-74",
+    "mailbox": "gmail",
+    "date": "2026-10-20T14:39:31+09:00",
+    "from": "밀리의 서재 <help@millie.co.kr>",
+    "subject": "[밀리의 서재] 정기결제 완료 안내",
+    "text": "월 정기구독 이용권 결제가 완료되었습니다.\n결제일: 2026-10-20\n결제금액: 9,900원\n다음 결제일: 2026-11-20"
+  },
+  {
+    "id": "gmail-76",
+    "mailbox": "gmail",
+    "date": "2026-10-24T13:45:31+09:00",
+    "from": "Netflix <info@mailer.netflix.com>",
+    "subject": "이번 주 넷플릭스 신작을 확인하세요",
+    "text": "새로운 시리즈가 공개되었습니다. 지금 시청하세요."
+  }
+]

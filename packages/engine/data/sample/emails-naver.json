@@ -1,0 +1,322 @@
+[
+  {
+    "id": "naver-1",
+    "mailbox": "naver",
+    "date": "2026-05-04T14:54:37+09:00",
+    "from": "쿠팡 <no-reply@coupang.com>",
+    "subject": "[쿠팡] 주문하신 상품의 결제가 완료되었습니다",
+    "text": "상품: 키친타월 6롤\n와우 멤버십 회원 무료배송이 적용되었습니다.\n상품금액: 74,100원\n배송비: 0원\n결제금액: 74,100원"
+  },
+  {
+    "id": "naver-2",
+    "mailbox": "naver",
+    "date": "2026-05-05T09:05:02+09:00",
+    "from": "Apple <no_reply@email.apple.com>",
+    "subject": "Apple에서 발송한 영수증입니다",
+    "text": "영수증\nApple 계정: us***@naver.com\n청구일: 2026년 5월 5일\n주문 ID: M9032-5665\n\niCloud+\niCloud+ 50GB (월간)\n갱신일: 2026년 6월 3일\n₩1,100\n\n합계 ₩1,100"
+  },
+  {
+    "id": "naver-7",
+    "mailbox": "naver",
+    "date": "2026-05-18T10:48:31+09:00",
+    "from": "Apple <no_reply@email.apple.com>",
+    "subject": "Apple에서 발송한 영수증입니다",
+    "text": "영수증\nApple 계정: us***@naver.com\n청구일: 2026년 5월 18일\n주문 ID: M5023-1727\n\nDuolingo\nDuolingo Super (월간)\n갱신일: 2026년 6월 18일\n₩13,000\n\n합계 ₩13,000"
+  },
+  {
+    "id": "naver-9",
+    "mailbox": "naver",
+    "date": "2026-05-21T17:44:34+09:00",
+    "from": "SK텔레콤 <billing@sktelecom.com>",
+    "subject": "[SK텔레콤] 5월 이용요금 자동이체 안내",
+    "text": "고객님의 5월 이용요금이 등록하신 계좌에서 자동이체로 출금되었습니다.\n출금일: 2026.05.21\n출금금액: 56,260원"
+  },
+  {
+    "id": "naver-10",
+    "mailbox": "naver",
+    "date": "2026-05-22T18:21:09+09:00",
+    "from": "네이버페이 <naverpay_noreply@navercorp.com>",
+    "subject": "[네이버페이] 결제가 완료되었습니다",
+    "text": "상품명: 여름 셔츠\n결제일시: 2026.05.22 14:22\n결제금액: 58,200원"
+  },
+  {
+    "id": "naver-11",
+    "mailbox": "naver",
+    "date": "2026-05-23T22:37:28+09:00",
+    "from": "Apple <no_reply@email.apple.com>",
+    "subject": "Apple에서 발송한 영수증입니다",
+    "text": "영수증\nApple 계정: us***@naver.com\n청구일: 2026년 5월 23일\n주문 ID: M7656-2079\n\nBear\nBear Pro (월간)\n갱신일: 2026년 6월 22일\n₩2,500\n\n합계 ₩2,500"
+  },
+  {
+    "id": "naver-13",
+    "mailbox": "naver",
+    "date": "2026-06-04T09:11:16+09:00",
+    "from": "Apple <no_reply@email.apple.com>",
+    "subject": "Apple에서 발송한 영수증입니다",
+    "text": "영수증\nApple 계정: us***@naver.com\n청구일: 2026년 6월 4일\n주문 ID: M9149-4033\n\niCloud+\niCloud+ 50GB (월간)\n갱신일: 2026년 7월 3일\n₩1,100\n\n합계 ₩1,100"
+  },
+  {
+    "id": "naver-19",
+    "mailbox": "naver",
+    "date": "2026-06-15T15:22:21+09:00",
+    "from": "네이버페이 <naverpay_noreply@navercorp.com>",
+    "subject": "[네이버페이] 정기결제가 완료되었습니다",
+    "text": "네이버플러스 멤버십 정기결제 안내\n결제일시: 2026.06.15 10:00\n결제금액: 4,900원\n결제수단: 신한카드\n다음 결제 예정일: 2026.07.15"
+  },
+  {
+    "id": "naver-20",
+    "mailbox": "naver",
+    "date": "2026-06-18T07:19:09+09:00",
+    "from": "Apple <no_reply@email.apple.com>",
+    "subject": "Apple에서 발송한 영수증입니다",
+    "text": "영수증\nApple 계정: us***@naver.com\n청구일: 2026년 6월 18일\n주문 ID: M5843-7304\n\nDuolingo\nDuolingo Super (월간)\n갱신일: 2026년 7월 18일\n₩13,000\n\n합계 ₩13,000"
+  },
+  {
+    "id": "naver-22",
+    "mailbox": "naver",
+    "date": "2026-06-22T11:30:34+09:00",
+    "from": "SK텔레콤 <billing@sktelecom.com>",
+    "subject": "[SK텔레콤] 6월 이용요금 자동이체 안내",
+    "text": "고객님의 6월 이용요금이 등록하신 계좌에서 자동이체로 출금되었습니다.\n출금일: 2026.06.22\n출금금액: 58,100원"
+  },
+  {
+    "id": "naver-23",
+    "mailbox": "naver",
+    "date": "2026-06-24T22:22:05+09:00",
+    "from": "Apple <no_reply@email.apple.com>",
+    "subject": "Apple에서 발송한 영수증입니다",
+    "text": "영수증\nApple 계정: us***@naver.com\n청구일: 2026년 6월 24일\n주문 ID: M4033-2319\n\nBear\nBear Pro (월간)\n갱신일: 2026년 7월 22일\n₩2,500\n\n합계 ₩2,500"
+  },
+  {
+    "id": "naver-24",
+    "mailbox": "naver",
+    "date": "2026-06-26T14:08:17+09:00",
+    "from": "쿠팡 <no-reply@coupang.com>",
+    "subject": "[쿠팡] 주문하신 상품의 결제가 완료되었습니다",
+    "text": "상품: 무선 마우스\n와우 멤버십 회원 무료배송이 적용되었습니다.\n상품금액: 58,500원\n배송비: 0원\n결제금액: 58,500원"
+  },
+  {
+    "id": "naver-25",
+    "mailbox": "naver",
+    "date": "2026-06-27T18:59:10+09:00",
+    "from": "쿠팡 <no-reply@coupang.com>",
+    "subject": "[쿠팡] 주문하신 상품의 결제가 완료되었습니다",
+    "text": "상품: 삼다수 2L x 12\n와우 멤버십 회원 무료배송이 적용되었습니다.\n상품금액: 65,200원\n배송비: 0원\n결제금액: 65,200원"
+  },
+  {
+    "id": "naver-26",
+    "mailbox": "naver",
+    "date": "2026-07-03T15:21:22+09:00",
+    "from": "Apple <no_reply@email.apple.com>",
+    "subject": "Apple에서 발송한 영수증입니다",
+    "text": "영수증\nApple 계정: us***@naver.com\n청구일: 2026년 7월 3일\n주문 ID: M7079-9922\n\niCloud+\niCloud+ 50GB (월간)\n갱신일: 2026년 8월 3일\n₩1,100\n\n합계 ₩1,100"
+  },
+  {
+    "id": "naver-30",
+    "mailbox": "naver",
+    "date": "2026-07-18T10:38:38+09:00",
+    "from": "Apple <no_reply@email.apple.com>",
+    "subject": "Apple에서 발송한 영수증입니다",
+    "text": "영수증\nApple 계정: us***@naver.com\n청구일: 2026년 7월 18일\n주문 ID: M8481-4774\n\nDuolingo\nDuolingo Super (월간)\n갱신일: 2026년 8월 18일\n₩13,000\n\n합계 ₩13,000"
+  },
+  {
+    "id": "naver-33",
+    "mailbox": "naver",
+    "date": "2026-07-21T17:26:12+09:00",
+    "from": "SK텔레콤 <billing@sktelecom.com>",
+    "subject": "[SK텔레콤] 7월 이용요금 자동이체 안내",
+    "text": "고객님의 7월 이용요금이 등록하신 계좌에서 자동이체로 출금되었습니다.\n출금일: 2026.07.21\n출금금액: 59,730원"
+  },
+  {
+    "id": "naver-34",
+    "mailbox": "naver",
+    "date": "2026-07-24T17:53:04+09:00",
+    "from": "Apple <no_reply@email.apple.com>",
+    "subject": "Apple에서 발송한 영수증입니다",
+    "text": "영수증\nApple 계정: us***@naver.com\n청구일: 2026년 7월 24일\n주문 ID: M4451-9632\n\nBear\nBear Pro (월간)\n갱신일: 2026년 8월 22일\n₩2,500\n\n합계 ₩2,500"
+  },
+  {
+    "id": "naver-35",
+    "mailbox": "naver",
+    "date": "2026-07-25T21:01:31+09:00",
+    "from": "무신사 <news@musinsa.com>",
+    "subject": "[광고] 이번 주 회원 전용 특가",
+    "text": "최대 70% 할인\n쿠폰 5,000원 즉시 지급"
+  },
+  {
+    "id": "naver-37",
+    "mailbox": "naver",
+    "date": "2026-08-05T10:17:11+09:00",
+    "from": "Apple <no_reply@email.apple.com>",
+    "subject": "Apple에서 발송한 영수증입니다",
+    "text": "영수증\nApple 계정: us***@naver.com\n청구일: 2026년 8월 5일\n주문 ID: M4799-9374\n\niCloud+\niCloud+ 50GB (월간)\n갱신일: 2026년 9월 3일\n₩1,100\n\n합계 ₩1,100"
+  },
+  {
+    "id": "naver-39",
+    "mailbox": "naver",
+    "date": "2026-08-08T12:31:37+09:00",
+    "from": "쿠팡 <no-reply@coupang.com>",
+    "subject": "[쿠팡] 주문하신 상품의 결제가 완료되었습니다",
+    "text": "상품: 단백질 바 20개\n와우 멤버십 회원 무료배송이 적용되었습니다.\n상품금액: 76,900원\n배송비: 0원\n결제금액: 76,900원"
+  },
+  {
+    "id": "naver-41",
+    "mailbox": "naver",
+    "date": "2026-08-12T18:45:31+09:00",
+    "from": "쿠팡 <no-reply@coupang.com>",
+    "subject": "[쿠팡] 와우 멤버십 월회비 결제 안내",
+    "text": "고객님의 와우 멤버십 월회비가 정상적으로 결제되었습니다.\n결제일: 2026.08.12\n결제금액: 7,890원\n결제수단: 신한카드"
+  },
+  {
+    "id": "naver-42",
+    "mailbox": "naver",
+    "date": "2026-08-15T11:21:08+09:00",
+    "from": "네이버페이 <naverpay_noreply@navercorp.com>",
+    "subject": "[네이버페이] 정기결제가 완료되었습니다",
+    "text": "네이버플러스 멤버십 정기결제 안내\n결제일시: 2026.08.15 10:00\n결제금액: 4,900원\n결제수단: 신한카드\n다음 결제 예정일: 2026.09.15"
+  },
+  {
+    "id": "naver-43",
+    "mailbox": "naver",
+    "date": "2026-08-16T19:06:22+09:00",
+    "from": "네이버페이 <naverpay_noreply@navercorp.com>",
+    "subject": "[네이버페이] 결제가 완료되었습니다",
+    "text": "상품명: 블루투스 이어폰\n결제일시: 2026.08.16 14:22\n결제금액: 100,600원"
+  },
+  {
+    "id": "naver-44",
+    "mailbox": "naver",
+    "date": "2026-08-20T16:40:14+09:00",
+    "from": "Apple <no_reply@email.apple.com>",
+    "subject": "Apple에서 발송한 영수증입니다",
+    "text": "영수증\nApple 계정: us***@naver.com\n청구일: 2026년 8월 20일\n주문 ID: M6946-8793\n\nDuolingo\nDuolingo Super (월간)\n갱신일: 2026년 9월 18일\n₩13,000\n\n합계 ₩13,000"
+  },
+  {
+    "id": "naver-46",
+    "mailbox": "naver",
+    "date": "2026-08-22T14:20:07+09:00",
+    "from": "Apple <no_reply@email.apple.com>",
+    "subject": "Apple에서 발송한 영수증입니다",
+    "text": "영수증\nApple 계정: us***@naver.com\n청구일: 2026년 8월 22일\n주문 ID: M3504-9403\n\nBear\nBear Pro (월간)\n갱신일: 2026년 9월 22일\n₩2,500\n\n합계 ₩2,500"
+  },
+  {
+    "id": "naver-48",
+    "mailbox": "naver",
+    "date": "2026-08-25T18:22:30+09:00",
+    "from": "쿠팡 <no-reply@coupang.com>",
+    "subject": "[쿠팡] 주문하신 상품의 결제가 완료되었습니다",
+    "text": "상품: 삼다수 2L x 12\n와우 멤버십 회원 무료배송이 적용되었습니다.\n상품금액: 80,200원\n배송비: 0원\n결제금액: 80,200원"
+  },
+  {
+    "id": "naver-51",
+    "mailbox": "naver",
+    "date": "2026-09-03T10:47:19+09:00",
+    "from": "Apple <no_reply@email.apple.com>",
+    "subject": "Apple에서 발송한 영수증입니다",
+    "text": "영수증\nApple 계정: us***@naver.com\n청구일: 2026년 9월 3일\n주문 ID: M4957-2723\n\niCloud+\niCloud+ 50GB (월간)\n갱신일: 2026년 10월 3일\n₩1,100\n\n합계 ₩1,100"
+  },
+  {
+    "id": "naver-55",
+    "mailbox": "naver",
+    "date": "2026-09-11T20:32:34+09:00",
+    "from": "쿠팡 <no-reply@coupang.com>",
+    "subject": "[쿠팡] 주문하신 상품의 결제가 완료되었습니다",
+    "text": "상품: 단백질 바 20개\n와우 멤버십 회원 무료배송이 적용되었습니다.\n상품금액: 41,900원\n배송비: 0원\n결제금액: 41,900원"
+  },
+  {
+    "id": "naver-56",
+    "mailbox": "naver",
+    "date": "2026-09-12T14:50:17+09:00",
+    "from": "쿠팡 <no-reply@coupang.com>",
+    "subject": "[쿠팡] 와우 멤버십 월회비 결제 안내",
+    "text": "고객님의 와우 멤버십 월회비가 정상적으로 결제되었습니다.\n결제일: 2026.09.12\n결제금액: 7,890원\n결제수단: 신한카드"
+  },
+  {
+    "id": "naver-57",
+    "mailbox": "naver",
+    "date": "2026-09-15T22:27:23+09:00",
+    "from": "네이버페이 <naverpay_noreply@navercorp.com>",
+    "subject": "[네이버페이] 정기결제가 완료되었습니다",
+    "text": "네이버플러스 멤버십 정기결제 안내\n결제일시: 2026.09.15 10:00\n결제금액: 4,900원\n결제수단: 신한카드\n다음 결제 예정일: 2026.10.15"
+  },
+  {
+    "id": "naver-61",
+    "mailbox": "naver",
+    "date": "2026-09-20T08:20:20+09:00",
+    "from": "밀리의 서재 <help@millie.co.kr>",
+    "subject": "[밀리의 서재] 정기결제 완료 안내",
+    "text": "월 정기구독 이용권 결제가 완료되었습니다.\n결제일: 2026-09-20\n결제금액: 9,900원\n다음 결제일: 2026-10-20"
+  },
+  {
+    "id": "naver-62",
+    "mailbox": "naver",
+    "date": "2026-09-20T15:42:17+09:00",
+    "from": "쿠팡 <no-reply@coupang.com>",
+    "subject": "[쿠팡] 주문하신 상품의 결제가 완료되었습니다",
+    "text": "상품: 단백질 바 20개\n와우 멤버십 회원 무료배송이 적용되었습니다.\n상품금액: 88,300원\n배송비: 0원\n결제금액: 88,300원"
+  },
+  {
+    "id": "naver-63",
+    "mailbox": "naver",
+    "date": "2026-09-20T19:50:06+09:00",
+    "from": "Apple <no_reply@email.apple.com>",
+    "subject": "Apple에서 발송한 영수증입니다",
+    "text": "영수증\nApple 계정: us***@naver.com\n청구일: 2026년 9월 20일\n주문 ID: M3782-5250\n\nDuolingo\nDuolingo Super (월간)\n갱신일: 2026년 10월 18일\n₩13,000\n\n합계 ₩13,000"
+  },
+  {
+    "id": "naver-64",
+    "mailbox": "naver",
+    "date": "2026-09-22T13:44:31+09:00",
+    "from": "쿠팡 <no-reply@coupang.com>",
+    "subject": "[쿠팡] 주문하신 상품의 결제가 완료되었습니다",
+    "text": "상품: 삼다수 2L x 12\n와우 멤버십 회원 무료배송이 적용되었습니다.\n상품금액: 42,500원\n배송비: 0원\n결제금액: 42,500원"
+  },
+  {
+    "id": "naver-65",
+    "mailbox": "naver",
+    "date": "2026-09-22T18:03:23+09:00",
+    "from": "Apple <no_reply@email.apple.com>",
+    "subject": "Apple에서 발송한 영수증입니다",
+    "text": "영수증\nApple 계정: us***@naver.com\n청구일: 2026년 9월 22일\n주문 ID: M6787-6673\n\nBear\nBear Pro (월간)\n갱신일: 2026년 10월 22일\n₩2,500\n\n합계 ₩2,500"
+  },
+  {
+    "id": "naver-66",
+    "mailbox": "naver",
+    "date": "2026-09-29T21:19:22+09:00",
+    "from": "네이버페이 <naverpay_noreply@navercorp.com>",
+    "subject": "[네이버페이] 결제가 완료되었습니다",
+    "text": "상품명: 캠핑 의자\n결제일시: 2026.09.29 14:22\n결제금액: 29,500원"
+  },
+  {
+    "id": "naver-67",
+    "mailbox": "naver",
+    "date": "2026-10-01T07:47:14+09:00",
+    "from": "Apple <no_reply@email.apple.com>",
+    "subject": "Apple에서 발송한 영수증입니다",
+    "text": "영수증\nApple 계정: us***@naver.com\n청구일: 2026년 10월 1일\n\n브롤스타즈\n보석 30개\n₩5,500\n\n합계 ₩5,500"
+  },
+  {
+    "id": "naver-68",
+    "mailbox": "naver",
+    "date": "2026-10-03T19:40:11+09:00",
+    "from": "Apple <no_reply@email.apple.com>",
+    "subject": "Apple에서 발송한 영수증입니다",
+    "text": "영수증\nApple 계정: us***@naver.com\n청구일: 2026년 10월 3일\n주문 ID: M7413-6289\n\niCloud+\niCloud+ 50GB (월간)\n갱신일: 2026년 11월 3일\n₩1,100\n\n합계 ₩1,100"
+  },
+  {
+    "id": "naver-73",
+    "mailbox": "naver",
+    "date": "2026-10-18T19:04:27+09:00",
+    "from": "Apple <no_reply@email.apple.com>",
+    "subject": "Apple에서 발송한 영수증입니다",
+    "text": "영수증\nApple 계정: us***@naver.com\n청구일: 2026년 10월 18일\n주문 ID: M4621-7633\n\nDuolingo\nDuolingo Super (월간)\n갱신일: 2026년 11월 18일\n₩13,000\n\n합계 ₩13,000"
+  },
+  {
+    "id": "naver-75",
+    "mailbox": "naver",
+    "date": "2026-10-24T10:55:26+09:00",
+    "from": "Apple <no_reply@email.apple.com>",
+    "subject": "Apple에서 발송한 영수증입니다",
+    "text": "영수증\nApple 계정: us***@naver.com\n청구일: 2026년 10월 24일\n주문 ID: M4231-8820\n\nBear\nBear Pro (월간)\n갱신일: 2026년 11월 22일\n₩2,500\n\n합계 ₩2,500"
+  }
+]
