@@ -1,0 +1,21 @@
+{
+  "name": "cashleak",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "거래내역과 메일 영수증으로 정기 구독을 찾아내는 탐지 엔진",
+  "engines": {
+    "node": ">=22.18"
+  },
+  "scripts": {
+    "generate": "node scripts/generate.ts",
+    "detect": "node scripts/detect.ts",
+    "evaluate": "node scripts/evaluate.ts",
+    "test": "node --test \"test/**/*.test.ts\"",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "typescript": "^5.9.3"
+  }
+}
