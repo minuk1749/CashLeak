@@ -1,0 +1,508 @@
+{
+  "asOf": "2026-10-26",
+  "truth": [
+    {
+      "key": "netflix",
+      "name": "넷플릭스",
+      "kind": "subscription",
+      "cycle": "monthly",
+      "status": "active",
+      "amount": 17000,
+      "nextPaymentDate": "2026-11-05",
+      "path": [
+        "신한카드"
+      ],
+      "charges": 6,
+      "receipts": 2,
+      "detectable": true
+    },
+    {
+      "key": "youtube-premium",
+      "name": "유튜브 프리미엄",
+      "kind": "subscription",
+      "cycle": "monthly",
+      "status": "active",
+      "amount": 14900,
+      "nextPaymentDate": "2026-11-07",
+      "path": [
+        "신한카드"
+      ],
+      "charges": 6,
+      "receipts": 6,
+      "detectable": true
+    },
+    {
+      "key": "chatgpt-plus",
+      "name": "ChatGPT Plus",
+      "kind": "subscription",
+      "cycle": "monthly",
+      "status": "active",
+      "amount": 27706,
+      "foreignAmount": 20,
+      "nextPaymentDate": "2026-11-09",
+      "path": [
+        "신한카드"
+      ],
+      "charges": 6,
+      "receipts": 6,
+      "detectable": true
+    },
+    {
+      "key": "coupang-wow",
+      "name": "쿠팡 와우 멤버십",
+      "kind": "subscription",
+      "cycle": "monthly",
+      "status": "active",
+      "amount": 7890,
+      "nextPaymentDate": "2026-11-12",
+      "path": [
+        "신한카드"
+      ],
+      "charges": 6,
+      "receipts": 2,
+      "detectable": true
+    },
+    {
+      "key": "naver-plus",
+      "name": "네이버플러스 멤버십",
+      "kind": "subscription",
+      "cycle": "monthly",
+      "status": "active",
+      "amount": 4900,
+      "nextPaymentDate": "2026-11-15",
+      "path": [
+        "신한카드",
+        "네이버페이"
+      ],
+      "charges": 6,
+      "receipts": 3,
+      "detectable": true
+    },
+    {
+      "key": "melon",
+      "name": "멜론",
+      "kind": "subscription",
+      "cycle": "monthly",
+      "status": "active",
+      "amount": 10900,
+      "nextPaymentDate": "2026-11-16",
+      "path": [
+        "농협은행 계좌",
+        "카카오페이"
+      ],
+      "charges": 6,
+      "receipts": 0,
+      "detectable": true
+    },
+    {
+      "key": "emoticon-plus",
+      "name": "이모티콘 플러스",
+      "kind": "subscription",
+      "cycle": "monthly",
+      "status": "active",
+      "amount": 3900,
+      "nextPaymentDate": "2026-11-06",
+      "path": [
+        "농협은행 계좌",
+        "카카오페이 머니"
+      ],
+      "charges": 6,
+      "receipts": 0,
+      "detectable": true
+    },
+    {
+      "key": "icloud-plus",
+      "name": "iCloud+",
+      "kind": "subscription",
+      "cycle": "monthly",
+      "status": "active",
+      "amount": 1100,
+      "nextPaymentDate": "2026-11-03",
+      "path": [
+        "신한카드",
+        "애플 앱스토어"
+      ],
+      "charges": 6,
+      "receipts": 6,
+      "detectable": true
+    },
+    {
+      "key": "duolingo",
+      "name": "듀오링고 슈퍼",
+      "kind": "subscription",
+      "cycle": "monthly",
+      "status": "active",
+      "amount": 13000,
+      "nextPaymentDate": "2026-11-18",
+      "path": [
+        "신한카드",
+        "애플 앱스토어"
+      ],
+      "charges": 6,
+      "receipts": 6,
+      "detectable": true
+    },
+    {
+      "key": "app:bear-pro",
+      "name": "Bear Pro",
+      "kind": "subscription",
+      "cycle": "monthly",
+      "status": "active",
+      "amount": 2500,
+      "nextPaymentDate": "2026-11-22",
+      "path": [
+        "신한카드",
+        "애플 앱스토어"
+      ],
+      "charges": 6,
+      "receipts": 6,
+      "detectable": true
+    },
+    {
+      "key": "disney-plus",
+      "name": "디즈니+",
+      "kind": "subscription",
+      "cycle": "monthly",
+      "status": "canceled",
+      "amount": 9900,
+      "path": [
+        "신한카드"
+      ],
+      "charges": 3,
+      "receipts": 3,
+      "detectable": true
+    },
+    {
+      "key": "millie",
+      "name": "밀리의 서재",
+      "kind": "subscription",
+      "cycle": "monthly",
+      "status": "active",
+      "amount": 9900,
+      "nextPaymentDate": "2026-11-20",
+      "path": [
+        "신한카드",
+        "결제대행사"
+      ],
+      "charges": 6,
+      "receipts": 6,
+      "detectable": true
+    },
+    {
+      "key": "microsoft-365",
+      "name": "Microsoft 365",
+      "kind": "subscription",
+      "cycle": "yearly",
+      "status": "active",
+      "amount": 89000,
+      "nextPaymentDate": "2027-06-12",
+      "path": [
+        "신한카드"
+      ],
+      "charges": 1,
+      "receipts": 1,
+      "detectable": true
+    },
+    {
+      "key": "coway",
+      "name": "코웨이 렌탈",
+      "kind": "subscription",
+      "cycle": "monthly",
+      "status": "active",
+      "amount": 29900,
+      "nextPaymentDate": "2026-11-25",
+      "path": [
+        "농협은행 계좌"
+      ],
+      "charges": 6,
+      "receipts": 0,
+      "detectable": true
+    },
+    {
+      "key": "skt",
+      "name": "SK텔레콤 통신요금",
+      "kind": "bill",
+      "cycle": "monthly",
+      "status": "active",
+      "amount": 57340,
+      "nextPaymentDate": "2026-11-21",
+      "path": [
+        "농협은행 계좌"
+      ],
+      "charges": 6,
+      "receipts": 3,
+      "detectable": true
+    },
+    {
+      "key": "m:핏앤짐 역삼점",
+      "name": "핏앤짐 역삼점",
+      "kind": "subscription",
+      "cycle": "monthly",
+      "status": "active",
+      "amount": 77000,
+      "nextPaymentDate": "2026-11-01",
+      "path": [
+        "신한카드"
+      ],
+      "charges": 6,
+      "receipts": 0,
+      "detectable": true
+    },
+    {
+      "key": "spotify",
+      "name": "스포티파이",
+      "kind": "subscription",
+      "cycle": "monthly",
+      "status": "active",
+      "amount": 10900,
+      "nextPaymentDate": "2026-11-02",
+      "path": [
+        "신한카드"
+      ],
+      "charges": 2,
+      "receipts": 0,
+      "detectable": true
+    },
+    {
+      "key": "tving",
+      "name": "티빙",
+      "kind": "subscription",
+      "cycle": "monthly",
+      "status": "active",
+      "amount": 9500,
+      "nextPaymentDate": "2026-11-08",
+      "path": [
+        "신한카드"
+      ],
+      "charges": 1,
+      "receipts": 0,
+      "detectable": false
+    }
+  ],
+  "links": [
+    [
+      "naverpay-2",
+      "card-23"
+    ],
+    [
+      "naverpay-6",
+      "card-77"
+    ],
+    [
+      "naverpay-8",
+      "card-118"
+    ],
+    [
+      "naverpay-10",
+      "card-171"
+    ],
+    [
+      "naverpay-13",
+      "card-209"
+    ],
+    [
+      "naverpay-16",
+      "card-256"
+    ],
+    [
+      "kakaopay-6",
+      "bank-9"
+    ],
+    [
+      "kakaopay-16",
+      "bank-38"
+    ],
+    [
+      "kakaopay-27",
+      "bank-59"
+    ],
+    [
+      "kakaopay-33",
+      "bank-75"
+    ],
+    [
+      "kakaopay-46",
+      "bank-99"
+    ],
+    [
+      "kakaopay-54",
+      "bank-116"
+    ],
+    [
+      "kakaopay-1",
+      "bank-4"
+    ],
+    [
+      "kakaopay-21",
+      "bank-52"
+    ],
+    [
+      "kakaopay-49",
+      "bank-108"
+    ],
+    [
+      "naverpay-3",
+      "card-31"
+    ],
+    [
+      "naverpay-1",
+      "card-17"
+    ],
+    [
+      "kakaopay-9",
+      "bank-16"
+    ],
+    [
+      "kakaopay-4",
+      "bank-7"
+    ],
+    [
+      "kakaopay-7",
+      "bank-12"
+    ],
+    [
+      "kakaopay-3",
+      "bank-5"
+    ],
+    [
+      "kakaopay-10",
+      "bank-24"
+    ],
+    [
+      "naverpay-5",
+      "card-65"
+    ],
+    [
+      "naverpay-4",
+      "card-56"
+    ],
+    [
+      "naverpay-7",
+      "card-83"
+    ],
+    [
+      "kakaopay-13",
+      "bank-29"
+    ],
+    [
+      "kakaopay-18",
+      "bank-40"
+    ],
+    [
+      "kakaopay-19",
+      "bank-46"
+    ],
+    [
+      "kakaopay-15",
+      "bank-30"
+    ],
+    [
+      "kakaopay-17",
+      "bank-39"
+    ],
+    [
+      "kakaopay-11",
+      "bank-26"
+    ],
+    [
+      "naverpay-9",
+      "card-132"
+    ],
+    [
+      "kakaopay-25",
+      "bank-58"
+    ],
+    [
+      "kakaopay-20",
+      "bank-51"
+    ],
+    [
+      "kakaopay-23",
+      "bank-54"
+    ],
+    [
+      "kakaopay-28",
+      "bank-61"
+    ],
+    [
+      "naverpay-11",
+      "card-172"
+    ],
+    [
+      "kakaopay-38",
+      "bank-82"
+    ],
+    [
+      "kakaopay-32",
+      "bank-72"
+    ],
+    [
+      "kakaopay-39",
+      "bank-87"
+    ],
+    [
+      "kakaopay-36",
+      "bank-78"
+    ],
+    [
+      "kakaopay-29",
+      "bank-68"
+    ],
+    [
+      "kakaopay-31",
+      "bank-71"
+    ],
+    [
+      "kakaopay-34",
+      "bank-76"
+    ],
+    [
+      "naverpay-14",
+      "card-230"
+    ],
+    [
+      "naverpay-12",
+      "card-202"
+    ],
+    [
+      "kakaopay-44",
+      "bank-97"
+    ],
+    [
+      "kakaopay-43",
+      "bank-96"
+    ],
+    [
+      "kakaopay-47",
+      "bank-101"
+    ],
+    [
+      "kakaopay-40",
+      "bank-90"
+    ],
+    [
+      "naverpay-15",
+      "card-236"
+    ],
+    [
+      "kakaopay-56",
+      "bank-121"
+    ],
+    [
+      "kakaopay-51",
+      "bank-109"
+    ],
+    [
+      "kakaopay-52",
+      "bank-110"
+    ],
+    [
+      "kakaopay-55",
+      "bank-117"
+    ],
+    [
+      "kakaopay-53",
+      "bank-113"
+    ]
+  ]
+}

@@ -1,0 +1,54 @@
+@import "tailwindcss";
+
+@theme {
+  --color-bg: #f4f5f7;
+  --color-card: #ffffff;
+  --color-ink: #17191e;
+  --color-sub: #575d69;
+  --color-faint: #8a909b;
+  --color-line: #e5e7eb;
+  --color-accent: #0e7c72;
+  --color-accent-ink: #ffffff;
+  --color-accent-soft: #e3f3f1;
+  --color-warn: #a65c00;
+  --color-warn-soft: #fdf1df;
+  --color-danger: #c42b2b;
+  --color-danger-soft: #fdeaea;
+  --color-income: #1f6fd1;
+  --font-sans: -apple-system, BlinkMacSystemFont, "Apple SD Gothic Neo", "Pretendard", "Noto Sans KR", "Malgun Gothic", system-ui, sans-serif;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-bg: #0e1013;
+    --color-card: #181b20;
+    --color-ink: #eceef1;
+    --color-sub: #a4aab4;
+    --color-faint: #767c87;
+    --color-line: #2a2e35;
+    --color-accent: #3cc7b6;
+    --color-accent-ink: #062521;
+    --color-accent-soft: #11302c;
+    --color-warn: #f0b24a;
+    --color-warn-soft: #33260f;
+    --color-danger: #f07a7a;
+    --color-danger-soft: #3a1717;
+    --color-income: #74a8ff;
+  }
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  background: var(--color-bg);
+  color: var(--color-ink);
+  -webkit-tap-highlight-color: transparent;
+  word-break: keep-all;
+}
+
+/* 금액은 자릿수가 맞게 */
+.num {
+  font-variant-numeric: tabular-nums;
+}
