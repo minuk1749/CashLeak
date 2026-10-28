@@ -84,6 +84,18 @@ npm run evaluate -- 300           # 가상 사용자로 정확도 평가 → pac
 
 Supabase 스키마와 행 수준 보안 시험은 PostgreSQL이 필요해서 CI(`.github/workflows/ci.yml`)에서 돌립니다. 로컬에서는 `PGHOST` 등 접속 환경 변수를 지정하면 `npm test -w @cashleak/web`에 함께 포함됩니다.
 
+## 배포와 아이폰에서 쓰기
+
+Vercel에 올려 씁니다. 분석과 엑셀 암호 풀기는 브라우저 안에서 하므로 거래내역 파일과 비밀번호는 서버로 가지 않습니다.
+
+1. [vercel.com/new](https://vercel.com/new)에서 GitHub 계정으로 로그인하고 이 저장소를 가져옵니다(Import).
+2. **Root Directory**를 `apps/web`으로 정합니다. 프레임워크(Next.js)와 설치·빌드 명령은 기본값 그대로 둡니다. 엔진(`packages/engine`)은 Root Directory 밖에 있지만, 기본으로 켜져 있는 "Include source files outside of the Root Directory" 설정 덕분에 함께 빌드됩니다.
+3. 환경 변수 없이 배포하면 데이터는 그 브라우저에만 저장됩니다. 여러 기기에서 같이 쓰려면 `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`를 넣습니다 ([설정 방법](docs/supabase.md)).
+
+그다음부터는 main에 머지할 때마다 다시 배포되고, PR마다 미리보기 주소가 생깁니다.
+
+아이폰에서는 Safari로 배포 주소를 열고 공유 → **홈 화면에 추가**를 누릅니다. 홈 화면 앱은 Safari와 저장 공간이 따로라서, 내역은 홈 화면 아이콘으로 연 앱 안에서 올려야 합니다. 배포 주소는 누구나 열 수 있지만, 브라우저 저장 모드에서는 각자 기기에만 저장되므로 다른 사람이 내 내역을 볼 수 없습니다.
+
 ## 구조
 
 ```
