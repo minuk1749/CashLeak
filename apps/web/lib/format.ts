@@ -18,6 +18,30 @@ export function formatDate(date: string, options: { year?: boolean; weekday?: bo
   return `${options.year ? `${y}년 ` : ''}${m}월 ${d}일${options.weekday === false ? '' : ` (${wd})`}`;
 }
 
+/** 2026년 5월 1일 ~ 10월 26일. 해가 바뀌면 끝 날짜에도 연도를 붙인다. */
+export function formatPeriod(first: string, last: string): string {
+  const sameYear = first.slice(0, 4) === last.slice(0, 4);
+  return `${formatDate(first, { year: true, weekday: false })} ~ ${formatDate(last, { year: !sameYear, weekday: false })}`;
+}
+
+/** 26.5.1 ~ 10.26. 해가 바뀌면 25.10.30 ~ 26.10.26 */
+export function formatShortPeriod(first: string, last: string): string {
+  const [y, m, d] = first.split('-').map(Number);
+  const [y2, m2, d2] = last.split('-').map(Number);
+  return `${String(y).slice(2)}.${m}.${d} ~ ${y2 === y ? '' : `${String(y2).slice(2)}.`}${m2}.${d2}`;
+}
+
+/** 월 구분 머리글: 올해면 10월, 다른 해면 2025년 10월 */
+export function formatMonth(month: string, thisYear: string): string {
+  const [y, m] = month.split('-');
+  return `${y === thisYear ? '' : `${y}년 `}${Number(m)}월`;
+}
+
+/** 탐지 메모 속 날짜(2026-10-19)를 화면 표기(10월 19일)로 바꾼다. 올해가 아니면 연도를 붙인다. */
+export function formatNote(note: string, thisYear: string): string {
+  return note.replace(/\b(\d{4})-\d{2}-\d{2}\b/g, (date, year) => formatDate(date, { year: year !== thisYear, weekday: false }));
+}
+
 export function formatShortDate(date: string): string {
   const [, m, d] = date.split('-').map(Number);
   return `${m}.${d}`;

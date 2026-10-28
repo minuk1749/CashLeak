@@ -5,7 +5,7 @@ import Link from 'next/link';
 import type { Transaction } from '@cashleak/engine';
 import { useData } from '@/lib/data-context';
 import { txLabel, type SubscriptionView } from '@/lib/view';
-import { formatDate, signedWon } from '@/lib/format';
+import { formatDate, formatMonth, signedWon } from '@/lib/format';
 import { Badge, buttonClass, Card, ErrorBox, Loading, PageHeader } from '@/components/ui';
 import { PathLine } from '@/components/path';
 
@@ -21,8 +21,17 @@ const FILTERS: { id: Filter; label: string }[] = [
 const PAY_NAMES = /카카오페이|네이버페이|토스페이|페이코/;
 const PAGE = 60;
 
+/** 구독 분석에서 뺀 이유를 배지 길이로: '내 계좌로 옮긴 돈' → '내 계좌', '카드대금 (…)' → '카드대금', '저축·투자 이체' → '저축·투자' */
+function reasonBadge(reason: string): string {
+  if (reason.startsWith('내 계좌')) return '내 계좌';
+  return reason.replace(/\s*\(.*\)$/, '').replace(/ 이체$/, '');
+}
+
+/** 가져올 때 내 계좌 이동에 붙인 '(내 계좌)'는 배지로 보여 주므로 이름에서 뺀다. */
+const merchantName = (merchant: string) => merchant.replace(/ \(내 계좌\)$/, '') || '(내용 없음)';
+
 export default function PaymentsPage() {
-  const { status, error, result, snapshot, views } = useData();
+  const { status, error, result, snapshot, views, today } = useData();
   const [filter, setFilter] = useState<Filter>('all');
   const [limit, setLimit] = useState(PAGE);
   const [open, setOpen] = useState<string | null>(null);
@@ -107,14 +116,14 @@ export default function PaymentsPage() {
             const expanded = open === t.id;
             return (
               <div key={t.id}>
-                {newMonth && <p className="bg-bg px-4 py-1.5 text-xs font-semibold text-faint">{Number(month.slice(5))}월</p>}
+                {newMonth && <p className="bg-bg px-4 py-1.5 text-xs font-semibold text-faint">{formatMonth(month, today.slice(0, 4))}</p>}
                 <button type="button" onClick={() => setOpen(expanded ? null : t.id)} aria-expanded={expanded} className="flex w-full items-start gap-3 px-4 py-3 text-left active:bg-bg">
                   <span className="num w-9 shrink-0 pt-0.5 text-xs text-faint">{formatDate(t.date, { weekday: false }).replace(/^\d+월 /, '')}</span>
                   <span className="min-w-0 flex-1">
                     <span className="flex items-center gap-1.5">
-                      <span className="truncate font-medium">{t.merchant || '(내용 없음)'}</span>
+                      <span className="truncate font-medium">{merchantName(t.merchant)}</span>
                       {sub && <Badge tone="accent">구독</Badge>}
-                      {excluded.has(t.merchant) && <Badge>{excluded.get(t.merchant)!.split(' ')[0]}</Badge>}
+                      {excluded.has(t.merchant) && <Badge>{reasonBadge(excluded.get(t.merchant)!)}</Badge>}
                     </span>
                     <PathLine path={t.path ?? [txLabel(t)]} className="mt-0.5" />
                   </span>

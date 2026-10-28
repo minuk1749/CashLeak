@@ -6,7 +6,7 @@ import { guessInstitution } from '@cashleak/engine';
 import { useData } from '@/lib/data-context';
 import { INSTITUTIONS, KIND_LABEL, openFile, parseFile, type FileInput, type OpenedFile, type ParsedFile } from '@/lib/files';
 import type { FileKind } from '@/lib/store/types';
-import { formatDate } from '@/lib/format';
+import { formatPeriod, formatShortPeriod } from '@/lib/format';
 import { uuid } from '@/lib/ids';
 import { Badge, Button, buttonClass, Card, ErrorBox, Loading, PageHeader, SectionTitle } from '@/components/ui';
 import { DemoButton } from '@/components/demo-button';
@@ -33,16 +33,7 @@ const KINDS: FileKind[] = ['bank', 'card', 'pay', 'email'];
 /** 화면에 '여는 중…'이 그려진 다음에 무거운 계산(암호 풀기)을 시작한다. */
 const afterPaint = () => new Promise<void>((resolve) => requestAnimationFrame(() => setTimeout(resolve, 0)));
 
-const period = (first?: string, last?: string) =>
-  first && last ? `${formatDate(first, { year: true, weekday: false })} ~ ${formatDate(last, { weekday: false })}` : '';
-
-/** 26.5.1 ~ 10.26 */
-const shortPeriod = (first?: string, last?: string) => {
-  if (!first || !last) return '';
-  const [y, m, d] = first.split('-').map(Number);
-  const [, m2, d2] = last.split('-').map(Number);
-  return `${String(y).slice(2)}.${m}.${d} ~ ${m2}.${d2}`;
-};
+const count = (n: number) => n.toLocaleString('ko-KR');
 
 export default function UploadPage() {
   const data = useData();
@@ -212,11 +203,12 @@ export default function UploadPage() {
                           <p className="mt-3 text-sm text-danger">{preview.error}</p>
                         ) : (
                           <p className="mt-3 text-sm text-sub">
-                            {preview.parsed!.total}줄 · {period(preview.parsed!.upload.firstDate, preview.parsed!.upload.lastDate) || '기간 없음'}
-                            {preview.parsed!.skipped > 0 && ` · 거래가 아닌 ${preview.parsed!.skipped}줄 건너뜀`}
+                            {count(preview.parsed!.total)}줄 ·{' '}
+                            {preview.parsed!.upload.firstDate ? formatPeriod(preview.parsed!.upload.firstDate, preview.parsed!.upload.lastDate!) : '기간 없음'}
+                            {preview.parsed!.skipped > 0 && ` · 거래가 아닌 ${count(preview.parsed!.skipped)}줄 건너뜀`}
                             {preview.parsed!.upload.count === 0
                               ? ' · 이미 올린 내역이라 새로 추가할 줄이 없어요'
-                              : preview.parsed!.duplicates > 0 && ` · 이미 올린 ${preview.parsed!.duplicates}줄은 빼고 추가`}
+                              : preview.parsed!.duplicates > 0 && ` · 이미 올린 ${count(preview.parsed!.duplicates)}줄은 빼고 추가`}
                           </p>
                         )}
                       </>
@@ -245,7 +237,7 @@ export default function UploadPage() {
             <ul className="mt-2 space-y-1 text-sm text-sub">
               {results.map((r) => (
                 <li key={r.upload.id}>
-                  · {r.upload.name}: {r.upload.count}건{r.duplicates > 0 && ` (겹친 ${r.duplicates}건 제외)`}
+                  · {r.upload.institution} {KIND_LABEL[r.upload.kind]} {count(r.upload.count)}건{r.duplicates > 0 && ` (겹친 ${count(r.duplicates)}건 제외)`}
                 </li>
               ))}
             </ul>
@@ -267,7 +259,7 @@ export default function UploadPage() {
                       <Badge>{KIND_LABEL[u.kind]}</Badge>
                     </p>
                     <p className="mt-0.5 truncate text-xs text-faint">
-                      {u.name} · {u.count}건{u.firstDate && ` · ${shortPeriod(u.firstDate, u.lastDate)}`}
+                      {count(u.count)}건{u.firstDate && u.lastDate && ` · ${formatShortPeriod(u.firstDate, u.lastDate)}`} · {u.name}
                     </p>
                   </div>
                   <button type="button" onClick={() => remove(u.id, u.name)} className="shrink-0 rounded-lg px-2 py-1 text-sm text-danger active:bg-danger-soft">

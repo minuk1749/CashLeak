@@ -7,7 +7,7 @@ import { kstDate, type EmailMessage, type Transaction } from '@cashleak/engine';
 import { useData } from '@/lib/data-context';
 import { mailboxLabel, txLabel, type SubscriptionView } from '@/lib/view';
 import type { SubscriptionEdit } from '@/lib/store/types';
-import { CYCLE_LABEL, dday, formatDate, signedWon } from '@/lib/format';
+import { CYCLE_LABEL, dday, formatDate, formatNote, signedWon } from '@/lib/format';
 import { Avatar, Badge, Button, buttonClass, Card, ErrorBox, Loading, PageHeader } from '@/components/ui';
 import { PathFlow, PathLine } from '@/components/path';
 import { SubscriptionForm, type FormValues } from '@/components/subscription-form';
@@ -169,7 +169,7 @@ export default function SubscriptionPage() {
             {v.notes.length > 0 && (
               <ul className="mt-2 space-y-1 text-sm text-sub">
                 {v.notes.map((n) => (
-                  <li key={n}>· {n}</li>
+                  <li key={n}>· {formatNote(n, today.slice(0, 4))}</li>
                 ))}
               </ul>
             )}

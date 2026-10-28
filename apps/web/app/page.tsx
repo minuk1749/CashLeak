@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { diffDays } from '@cashleak/engine';
 import { useData } from '@/lib/data-context';
 import { monthlyAmount, type SubscriptionView } from '@/lib/view';
-import { formatDate, won } from '@/lib/format';
+import { formatPeriod, won } from '@/lib/format';
 import { buttonClass, Card, ErrorBox, Loading, PageHeader, SectionTitle } from '@/components/ui';
 import { SubscriptionRow } from '@/components/subscription-row';
 import { DemoButton } from '@/components/demo-button';
@@ -87,7 +87,7 @@ export default function HomePage() {
 
         {first && last && (
           <p className="mt-4 px-1 text-xs leading-relaxed text-faint">
-            {formatDate(first, { year: true, weekday: false })} ~ {formatDate(last, { weekday: false })} 내역({snapshot.uploads.length}개 파일)으로 찾았어요.
+            {formatPeriod(first, last)} 내역({snapshot.uploads.length}개 파일)으로 찾았어요.
             {stale && ' 마지막 내역 이후 결제는 반영되지 않았으니 최신 내역을 올려 주세요.'}
           </p>
         )}
