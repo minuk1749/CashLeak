@@ -1,8 +1,13 @@
 import {
-  detectCsvKind,
+  detectKind,
   guessInstitution,
-  importCsv,
+  importRows,
   kstDate,
+  looksLikeSpreadsheet,
+  parseCsv,
+  readXlsx,
+  SpreadsheetError,
+  transactionSheet,
   type EmailMessage,
   type Mailbox,
   type Transaction,
@@ -19,7 +24,7 @@ export const INSTITUTIONS: Record<FileKind, string[]> = {
 };
 
 /** 은행·카드사 파일은 EUC-KR(CP949)로 저장된 경우가 많다. UTF-8로 안 읽히면 EUC-KR로 읽는다. */
-export function decodeText(buf: ArrayBuffer): string {
+export function decodeText(buf: ArrayBuffer | Uint8Array): string {
   try {
     return new TextDecoder('utf-8', { fatal: true }).decode(buf).replace(/^﻿/, '');
   } catch {
@@ -36,10 +41,17 @@ export interface FileGuess {
 
 const MAILBOX_NAME: Record<Mailbox, string> = { gmail: 'Gmail', naver: '네이버메일' };
 
-/** 파일 이름과 내용으로 어떤 내역인지, 어느 기관 것인지 추측한다. */
+/** 거래내역 표의 머리글과 파일 이름으로 종류와 기관을 추측한다. */
+function guessTable(name: string, rows: string[][]): FileGuess {
+  const kind = detectKind(rows);
+  if (!kind) return { kind: null, institution: '', problem: '어떤 내역인지 알아보지 못했어요. 종류를 직접 골라 주세요.' };
+  return { kind, institution: guessInstitution(name, kind) };
+}
+
+/** CSV·JSON 파일의 이름과 내용으로 어떤 내역인지, 어느 기관 것인지 추측한다. */
 export function guessFile(name: string, text: string): FileGuess {
-  if (/\.(xlsx?|pdf|hwp)$/i.test(name)) {
-    return { kind: null, institution: '', problem: '엑셀·PDF 파일은 아직 읽지 못해요. 엑셀에서 "CSV UTF-8"로 저장해서 올려 주세요.' };
+  if (/\.(pdf|hwp)$/i.test(name)) {
+    return { kind: null, institution: '', problem: 'PDF·한글 파일은 읽지 못해요. 거래내역을 엑셀이나 CSV로 저장해서 올려 주세요.' };
   }
   if (/\.json$/i.test(name)) {
     try {
@@ -49,9 +61,38 @@ export function guessFile(name: string, text: string): FileGuess {
       return { kind: null, institution: '', problem: (e as Error).message };
     }
   }
-  const kind = detectCsvKind(text);
-  if (!kind) return { kind: null, institution: '', problem: '어떤 내역인지 알아보지 못했어요. 종류를 직접 골라 주세요.' };
-  return { kind, institution: guessInstitution(name, kind) };
+  return guessTable(name, parseCsv(text));
+}
+
+export interface OpenedFile extends FileGuess {
+  /** CSV·JSON 파일의 글자 */
+  text: string;
+  /** 엑셀 파일에서 읽은 표 */
+  rows?: string[][];
+  /** 비밀번호를 넣어야 열리는 엑셀 파일. 비밀번호를 받으면 이 내용으로 openFile을 다시 부른다. */
+  locked?: Uint8Array;
+  /** 넣은 비밀번호가 틀렸는지 */
+  wrongPassword?: boolean;
+}
+
+/**
+ * 고른 파일을 읽는다. 엑셀은 표로, CSV·JSON은 글자로 읽는다.
+ * 비밀번호가 걸린 엑셀은 password가 맞아야 열리고, 없거나 틀리면 locked에 파일 내용을 담아 돌려준다.
+ * 비밀번호는 이 기기 안에서 파일을 여는 데만 쓰고 어디에도 저장하지 않는다.
+ */
+export function openFile(name: string, bytes: Uint8Array, password?: string): OpenedFile {
+  if (!looksLikeSpreadsheet(bytes)) {
+    const text = decodeText(bytes);
+    return { text, ...guessFile(name, text) };
+  }
+  try {
+    const rows = transactionSheet(readXlsx(bytes, { password }))?.rows ?? [];
+    return { text: '', rows, ...guessTable(name, rows) };
+  } catch (e) {
+    if (!(e instanceof SpreadsheetError)) throw e;
+    const locked = e.problem === 'unsupported' ? undefined : bytes;
+    return { text: '', locked, wrongPassword: e.problem === 'wrong-password', kind: null, institution: '', problem: e.message };
+  }
 }
 
 /** 메일은 3단계에서 Gmail·네이버메일을 직접 연결한다. 지금은 가상 데이터 형식(JSON)만 받는다. */
@@ -92,7 +133,10 @@ const emailBase = (m: EmailMessage) => [m.mailbox, m.date, m.from, m.subject].jo
 
 export interface FileInput {
   name: string;
+  /** CSV·JSON 파일의 글자 */
   text: string;
+  /** 엑셀 파일에서 읽은 표. 있으면 text 대신 쓴다. */
+  rows?: string[][];
   kind: FileKind;
   institution: string;
 }
@@ -130,7 +174,7 @@ export function parseFile(input: FileInput, existing: Set<string>, uploadId: str
       .filter((m) => !existing.has(m.fingerprint));
     dates = all.map((m) => kstDate(m.date));
   } else {
-    const all = importCsv(input.text, input.kind, {
+    const all = importRows(input.rows ?? parseCsv(input.text), input.kind, {
       idPrefix: uploadId,
       institution: input.institution,
       onSkip: () => skipped++,

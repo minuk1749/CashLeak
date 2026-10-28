@@ -1,6 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { detectRecurring } from '../src/detect/recurring.ts';
+import { relatedMerchants } from '../src/merchants.ts';
 import { bankTx, cardTx, monthlyDates } from './helpers.ts';
 
 const asOf = '2026-10-26';
@@ -123,4 +124,42 @@ test('카드대금, 적금, 현금 인출은 빼고 개인 송금은 정기 이�
 test('가맹점명 뒤에 붙는 번호가 달라도 같은 가맹점으로 묶는다', () => {
   const txs = monthlyDates('2026-05-01', 6).map((d, i) => cardTx(d, i % 2 ? `핏앤짐 역삼점 ${48210 + i}` : '핏앤짐 역삼점', 77000));
   assert.equal(detectRecurring(txs, { asOf }).series.length, 1);
+});
+
+test('모르는 가맹점에서 금액이 두 배 넘게 바뀌면 가격 변경이 아니라 다른 결제로 본다', () => {
+  // 간편결제 앱으로 소액을 낸 다음 달 같은 날 몇 배 큰 금액을 낸 경우 (실제 내역에서 한 구독으로 잘못 잡혔던 모양)
+  const tosspay = [cardTx('2026-08-12', '토스페이', 4800), cardTx('2026-09-12', '토스페이', 31000)];
+  assert.equal(detectRecurring(tosspay, { asOf }).series.length, 0);
+  // 알려진 구독 서비스는 요금제를 바꾸면 두 배 넘게 오를 수 있다.
+  const netflix = monthlyDates('2026-05-05', 6).map((d, i) => cardTx(d, 'NETFLIX.COM', i < 3 ? 5500 : 17000));
+  const { series } = detectRecurring(netflix, { asOf });
+  assert.equal(series.length, 1);
+  assert.deepEqual(series[0].priceChanges.map((c) => [c.from, c.to]), [[5500, 17000]]);
+});
+
+test('가맹점 표기만 바뀐 구독은 하나로 잇는다', () => {
+  // 청구 표기가 바뀌어 같은 구독이 '주식회사 카카오'로 찍히다가 '카카오구독료_카카오페이'로 찍힌다.
+  const before = monthlyDates('2025-11-07', 6).map((d) => bankTx(d, '주식회사 카카오', 2900, '체크카드결제'));
+  const after = monthlyDates('2026-05-07', 5).map((d) => bankTx(d, '카카오구독료_카카오페이', 2900, '체크카드결제'));
+  const { series } = detectRecurring([...before, ...after], { asOf });
+  assert.equal(series.length, 1);
+  assert.equal(series[0].serviceId, 'kakao-subscription');
+  assert.equal(series[0].transactions.length, 11);
+  assert.equal(series[0].firstDate, '2025-11-07');
+  assert.equal(series[0].nextDate, '2026-10-07');
+});
+
+test('지점명만 같은 다른 가게나 금액이 달라진 결제는 잇지 않는다', () => {
+  const gs = monthlyDates('2026-03-12', 3).map((d) => cardTx(d, 'GS25 역삼점', 4400));
+  const cu = monthlyDates('2026-06-12', 3).map((d) => cardTx(d, 'CU 역삼점', 4400));
+  assert.equal(detectRecurring([...gs, ...cu], { asOf }).series.length, 2);
+
+  const before = monthlyDates('2026-01-07', 4).map((d) => bankTx(d, '주식회사 카카오', 2900, '체크카드결제'));
+  const after = monthlyDates('2026-05-07', 5).map((d) => bankTx(d, '카카오구독료_카카오페이', 4900, '체크카드결제'));
+  assert.equal(detectRecurring([...before, ...after], { asOf }).series.length, 2);
+
+  assert.equal(relatedMerchants('주식회사 카카오', '카카오구독료_카카오페이'), true);
+  assert.equal(relatedMerchants('에스케이텔레콤(주)', 'SKT구독_TOSS'), true);
+  assert.equal(relatedMerchants('GS25 역삼점', 'CU 역삼점'), false);
+  assert.equal(relatedMerchants('카카오페이', '네이버페이'), false);
 });

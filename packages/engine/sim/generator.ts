@@ -4,6 +4,7 @@ import type { Currency, Cycle, EmailMessage, Mailbox, Transaction, TxKind } from
 import { addDays, addMonths, addYears, anchoredDate, diffDays, monthIndex, weekday, yearlyDate } from '../src/dates.ts';
 import { appKey, INTERMEDIARY_BY_ID, matchMerchant } from '../src/merchants.ts';
 import { createRng, type Rng } from './rng.ts';
+import { PAY_KIND_LABEL } from './export.ts';
 import { NOISE, TEMPLATES, type Issuer, type MailContent } from './mail-templates.ts';
 
 export const WINDOW_START = '2026-05-01';
@@ -194,6 +195,7 @@ class Builder {
       merchant,
       amount,
       direction: 'out',
+      method: PAY_KIND_LABEL[kind],
       kind,
       funding: fundingText(platform, funding),
     };
@@ -201,7 +203,7 @@ class Builder {
       if (this.balance[platform] < amount) {
         // 잔액이 모자라면 1만 원 단위로 자동 충전된다.
         const charge = Math.ceil((amount - this.balance[platform]) / 10000) * 10000;
-        const topup: Transaction = { ...tx, merchant: `${PAY_NAME[platform]}머니 충전`, amount: charge, direction: 'in', kind: 'topup', funding: '농협 계좌' };
+        const topup: Transaction = { ...tx, merchant: `${PAY_NAME[platform]}머니 충전`, amount: charge, direction: 'in', method: PAY_KIND_LABEL.topup, kind: 'topup', funding: '농협 계좌' };
         this.pay.push(topup);
         this.links.push([topup, this.addBank(date, BANK_LABEL[platform], charge, 'out', '간편결제', undefined, this.near(time))]);
         this.balance[platform] += charge;

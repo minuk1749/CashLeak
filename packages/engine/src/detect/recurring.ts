@@ -5,6 +5,7 @@ import {
   isBillMerchant,
   looksLikePersonalTransfer,
   matchMerchant,
+  relatedMerchants,
   SERVICE_BY_ID,
   type MerchantMatch,
 } from '../merchants.ts';
@@ -65,7 +66,7 @@ export function detectRecurring(transactions: Transaction[], options: DetectOpti
   const used = new Set<string>();
   for (const { match, txs } of groups.values()) {
     const unknownMerchant = !match.serviceId && !match.via;
-    for (const found of findSeries(txs, tol, !match.via)) {
+    for (const found of findSeries(txs, tol, !match.via, Boolean(match.serviceId))) {
       // 자주 가는 가게(편의점, 카페)에서 같은 금액이 우연히 한 달 간격으로 두 번 찍힌 경우를 거른다.
       if (unknownMerchant && found.txs.length < 3 && txs.length > found.txs.length + 3) continue;
       const s = buildSeries(match, found.txs, found.fit, options.asOf, grace, txs.length - found.txs.length);
@@ -74,29 +75,74 @@ export function detectRecurring(transactions: Transaction[], options: DetectOpti
       for (const tx of s.transactions) used.add(tx.id);
     }
   }
-  series.sort((a, b) => a.key.localeCompare(b.key) || a.firstDate.localeCompare(b.firstDate));
-  series.forEach((s, i) => (s.id = `s${i + 1}`));
+  const joined = joinRenamed(series, tol, options.asOf, grace);
+  joined.sort((a, b) => a.key.localeCompare(b.key) || a.firstDate.localeCompare(b.firstDate));
+  joined.forEach((s, i) => (s.id = `s${i + 1}`));
 
   const unmatched = transactions.filter((tx) => tx.direction === 'out' && !used.has(tx.id) && !exclusionReason(tx));
-  return { series, excluded: [...excluded.values()], unmatched };
+  return { series: joined, excluded: [...excluded.values()], unmatched };
+}
+
+/**
+ * 가맹점 표기만 바뀐 구독을 하나로 잇는다. 청구 방식이나 결제대행사가 바뀌면 같은 구독이
+ * '주식회사 카카오' → '카카오구독료_카카오페이'처럼 다른 이름으로 찍힌다 (실제 토스뱅크 내역).
+ * 앞 묶음이 끝난 바로 다음 차례에 뒤 묶음이 같은 금액으로 시작하고, 이름이 같은 회사로 보일 때만 잇는다.
+ */
+function joinRenamed(series: RecurringSeries[], tol: number, asOf: string, grace: number): RecurringSeries[] {
+  const list = [...series];
+  for (let changed = true; changed; ) {
+    changed = false;
+    search: for (const a of list) {
+      for (const b of list) {
+        if (a === b || a.key === b.key || a.kind === 'transfer' || b.kind === 'transfer' || a.cycle !== b.cycle) continue;
+        if (a.lastDate >= b.firstDate || Math.abs(diffDays(a.nextDate, b.firstDate)) > tol) continue;
+        const [x, y] = [amountValue(a.transactions[a.transactions.length - 1]), amountValue(b.transactions[0])];
+        if (x.currency !== y.currency || Math.abs(x.value - y.value) > 0.005) continue;
+        if (!relatedMerchants(a.merchant, b.merchant)) continue;
+        const txs = [...a.transactions, ...b.transactions];
+        const fit = fitCycle(txs.map((t) => t.date), tol);
+        if (!fit || fit.irregular > 0) continue;
+        const match = { key: b.key, serviceId: b.serviceId, via: b.via };
+        const merged = buildSeries(match, txs, fit, asOf, grace, a.otherPaymentsAtMerchant + b.otherPaymentsAtMerchant);
+        if (!merged) continue;
+        list.splice(list.indexOf(b), 1, merged);
+        list.splice(list.indexOf(a), 1);
+        changed = true;
+        break search;
+      }
+    }
+  }
+  return list;
 }
 
 /**
  * 같은 가맹점 거래에서 반복 결제 묶음을 찾는다.
  * 1) 전체가 한 주기에 딱 맞으면 하나의 묶음 (금액이 바뀌어도 같은 구독으로 본다)
  * 2) 아니면 같은 금액끼리 나눠서 각각 주기를 확인 (애플처럼 한 가맹점에 구독이 여러 개인 경우)
+ * 알려진 서비스가 아니면, 금액이 한 번에 두 배 넘게 바뀐 것은 가격 변경으로 보지 않는다
+ * (실제 내역에서 토스페이로 낸 소액 결제와 다음 달의 몇 배 큰 결제가 한 구독으로 잡힌 적이 있다).
  */
-function findSeries(txs: Transaction[], tol: number, allowMerge: boolean) {
+function findSeries(txs: Transaction[], tol: number, allowMerge: boolean, knownService: boolean) {
   const sorted = [...txs].sort(byDate);
+  const plausible = (list: Transaction[]) => knownService || steadyAmounts(list);
   const whole = fitCycle(sorted.map((t) => t.date), tol);
-  if (whole && whole.irregular === 0) return [{ txs: sorted, fit: whole }];
+  if (whole && whole.irregular === 0 && plausible(sorted)) return [{ txs: sorted, fit: whole }];
 
   const found: { txs: Transaction[]; fit: CycleFit }[] = [];
   for (const cluster of clusterByAmount(sorted)) {
     const fit = fitCycle(cluster.map((t) => t.date), tol);
     if (fit) found.push({ txs: cluster, fit });
   }
-  return allowMerge ? mergeSequential(found, tol) : found;
+  return allowMerge ? mergeSequential(found, tol, plausible) : found;
+}
+
+/** 이어지는 결제 금액이 매번 두 배 이내로만 바뀌는지 */
+function steadyAmounts(txs: Transaction[]): boolean {
+  return txs.every((t, i) => {
+    if (i === 0) return true;
+    const [a, b] = [amountValue(txs[i - 1]).value, amountValue(t).value];
+    return Math.max(a, b) <= 2 * Math.min(a, b);
+  });
 }
 
 function amountValue(tx: Transaction): { value: number; currency: Currency } {
@@ -116,7 +162,7 @@ function clusterByAmount(sorted: Transaction[]): Transaction[][] {
 }
 
 /** 끝난 묶음 바로 뒤에 이어지는 묶음은 가격이 바뀐 같은 구독으로 합친다. */
-function mergeSequential(found: { txs: Transaction[]; fit: CycleFit }[], tol: number) {
+function mergeSequential(found: { txs: Transaction[]; fit: CycleFit }[], tol: number, plausible: (txs: Transaction[]) => boolean) {
   const list = [...found].sort((a, b) => a.txs[0].date.localeCompare(b.txs[0].date));
   let merged = true;
   while (merged) {
@@ -129,7 +175,7 @@ function mergeSequential(found: { txs: Transaction[]; fit: CycleFit }[], tol: nu
         if (a.txs[a.txs.length - 1].date >= b.txs[0].date) continue;
         const txs = [...a.txs, ...b.txs];
         const fit = fitCycle(txs.map((t) => t.date), tol);
-        if (fit && fit.irregular === 0) {
+        if (fit && fit.irregular === 0 && plausible(txs)) {
           list.splice(j, 1);
           list[i] = { txs, fit };
           merged = true;

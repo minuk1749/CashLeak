@@ -30,9 +30,13 @@ export const SERVICES: ServiceInfo[] = [
   { id: 'tving', name: '티빙', category: 'OTT', kind: 'subscription', merchants: [/티빙/, /TVING/], names: [/티빙|TVING/i], senders: ['tving.com'] },
   { id: 'baemin-club', name: '배민클럽', category: '배달 멤버십', kind: 'subscription', merchants: [/배민 ?클럽/], names: [/배민 ?클럽/], senders: ['woowahan.com'] },
   { id: 'coway', name: '코웨이 렌탈', category: '렌탈', kind: 'subscription', merchants: [/코웨이/, /COWAY/], names: [/코웨이/], senders: ['coway.com'] },
+  // 실제 토스뱅크 내역에서 'SKT구독_TOSS'로 찍힌 구독 상품(T 우주 등). 통신요금보다 먼저 확인한다.
+  { id: 'skt-subscription', name: 'SKT 구독', category: '통신사 구독', kind: 'subscription', merchants: [/SKT ?구독/, /T ?우주/, /우주 ?패스/], names: [/T ?우주|우주 ?패스/], senders: [] },
   { id: 'skt', name: 'SK텔레콤 통신요금', category: '통신', kind: 'bill', merchants: [/SKT/, /SK ?텔레콤/, /에스케이텔레콤/], names: [/SK ?텔레콤/], senders: ['sktelecom.com'] },
   { id: 'melon', name: '멜론', category: '음악', kind: 'subscription', merchants: [/멜론/, /MELON/], names: [/멜론|Melon/i], senders: ['melon.com'] },
   { id: 'emoticon-plus', name: '이모티콘 플러스', category: '디지털 콘텐츠', kind: 'subscription', merchants: [/이모티콘 ?플러스/], names: [/이모티콘 ?플러스/], senders: [] },
+  // 실제 토스뱅크 체크카드 내역에서 '카카오구독료_카카오페이'로 찍힌 결제. 어떤 상품인지는 내역만으로 알 수 없다.
+  { id: 'kakao-subscription', name: '카카오 구독', category: '디지털 콘텐츠', kind: 'subscription', merchants: [/카카오 ?구독/], names: [], senders: [] },
 ];
 
 export const SERVICE_BY_ID = new Map(SERVICES.map((s) => [s.id, s]));
@@ -78,6 +82,36 @@ export interface MerchantMatch {
   via?: Intermediary;
 }
 
+// 같은 회사가 다르게 적히는 경우
+const NAME_ALIASES: [RegExp, string][] = [[/에스케이텔레콤|SK ?텔레콤/g, 'SKT']];
+
+/** 이름을 비교할 낱말들. 여러 서비스에 공통인 결제 중개자 이름은 뺀다. */
+function nameTokens(raw: string): string[] {
+  let text = canonicalize(raw);
+  for (const [pattern, to] of NAME_ALIASES) text = text.replace(pattern, to);
+  for (const i of INTERMEDIARIES) for (const p of i.merchants) text = text.replace(new RegExp(p.source, 'g'), ' ');
+  return text.split(' ').filter((t) => t.length >= 2);
+}
+
+/**
+ * 두 가맹점명이 같은 회사로 보이는지 ('주식회사 카카오'와 '카카오구독료_카카오페이', '에스케이텔레콤(주)'와 'SKT구독_TOSS').
+ * 회사 이름이 앞에 오므로 첫 낱말끼리 비교한다. 'GS25 역삼점'과 'CU 역삼점'처럼 지점명만 같으면 다른 회사다.
+ */
+export function relatedMerchants(a: string, b: string): boolean {
+  const [x] = nameTokens(a);
+  const [y] = nameTokens(b);
+  return Boolean(x && y) && (x.startsWith(y) || y.startsWith(x));
+}
+
+/**
+ * 서비스 이름과 간편결제 앱 이름이 같이 찍힌 가맹점명이면 그 앱 (예: '카카오구독료_카카오페이' → 카카오페이).
+ * 앱스토어·결제대행사는 'GOOGLE*YOUTUBE'처럼 청구 표기일 뿐이라 결제 경로에 넣지 않는다.
+ */
+export function payAppIn(raw: string): Intermediary | undefined {
+  const text = canonicalize(raw);
+  return INTERMEDIARIES.find((i) => PAY_PLATFORMS.includes(i.id) && i.merchants.some((p) => p.test(text)))?.id;
+}
+
 export function matchMerchant(raw: string): MerchantMatch {
   const text = canonicalize(raw);
   for (const s of SERVICES) {
@@ -104,9 +138,14 @@ const SAVINGS = /적금|예금|청약|저축|증권|투자|내 ?계좌|본인 ?�
 const BILL = /한국전력|한전|도시가스|가스공사|수도요금|관리비|보험|생명|화재|손해|건강보험|국민연금|LG ?U\+|유플러스|알뜰폰|\bKT\b/;
 const CASH = /ATM|현금 ?인출|CD ?출금/;
 const PERSON = /^[가-힣]{2,4}$/;
+/** 본인 명의 계좌끼리 옮긴 돈 (통장 가져오기에서 예금주 이름이면 '(내 계좌)'를 붙인다) */
+const SELF = /내 ?계좌|본인 ?계좌/;
+/** 사람에게 보낸 돈일 수 있는 통장 거래유형 (토스뱅크는 계좌이체를 '출금'·'입금'으로 적는다) */
+const TRANSFER_METHOD = /^(이체|송금|출금|입금)$/;
 
 /** 구독 후보에서 아예 빼야 하는 출금이면 그 이유를 돌려준다. */
 export function exclusionReason(tx: Transaction): string | undefined {
+  if (SELF.test(canonicalize(`${tx.merchant} ${tx.memo ?? ''} ${tx.method ?? ''}`))) return '내 계좌로 옮긴 돈';
   if (tx.source !== 'bank') return undefined;
   const text = canonicalize(`${tx.merchant} ${tx.memo ?? ''}`);
   if (tx.method === '카드대금' || CARD_BILL.test(text)) return '카드대금 (카드 내역에서 개별 결제로 확인)';
@@ -116,7 +155,7 @@ export function exclusionReason(tx: Transaction): string | undefined {
 }
 
 export function looksLikePersonalTransfer(tx: Transaction): boolean {
-  const transfer = (tx.source === 'bank' && tx.method === '이체') || (tx.source === 'pay' && tx.kind === 'transfer');
+  const transfer = (tx.source === 'bank' && TRANSFER_METHOD.test(tx.method ?? '')) || (tx.source === 'pay' && tx.kind === 'transfer');
   return transfer && PERSON.test(tx.merchant.trim());
 }
 

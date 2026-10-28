@@ -37,12 +37,13 @@ export function cardCsv(txs: Transaction[], cardName = '신한카드(1234)'): st
   return toCsv([['이용일자', '이용시간', '이용카드', '가맹점명', '이용금액', '해외이용금액', '통화', '결제방법', '승인번호'], ...rows]);
 }
 
-const PAY_KIND_LABEL: Record<TxKind, string> = { payment: '결제', topup: '충전', transfer: '송금', refund: '환불' };
+/** 간편결제 내역의 '구분' 열 문구 */
+export const PAY_KIND_LABEL: Record<TxKind, string> = { payment: '결제', topup: '충전', transfer: '송금', refund: '환불' };
 
 export function payCsv(txs: Transaction[]): string {
   const rows = txs.map((t) => [
     `${t.date} ${t.time ?? '00:00:00'}`,
-    PAY_KIND_LABEL[t.kind ?? 'payment'],
+    t.method ?? PAY_KIND_LABEL[t.kind ?? 'payment'],
     t.merchant,
     (t.direction === 'in' ? '' : '-') + fmt(t.amount),
     t.funding,

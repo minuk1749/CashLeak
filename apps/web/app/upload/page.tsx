@@ -1,26 +1,37 @@
 'use client';
 
-import { useMemo, useRef, useState, type ChangeEvent } from 'react';
+import { useMemo, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 import Link from 'next/link';
 import { guessInstitution } from '@cashleak/engine';
 import { useData } from '@/lib/data-context';
-import { decodeText, guessFile, INSTITUTIONS, KIND_LABEL, parseFile, type FileInput, type ParsedFile } from '@/lib/files';
+import { INSTITUTIONS, KIND_LABEL, openFile, parseFile, type FileInput, type OpenedFile, type ParsedFile } from '@/lib/files';
 import type { FileKind } from '@/lib/store/types';
 import { formatDate } from '@/lib/format';
 import { uuid } from '@/lib/ids';
 import { Badge, Button, buttonClass, Card, ErrorBox, Loading, PageHeader, SectionTitle } from '@/components/ui';
 import { DemoButton } from '@/components/demo-button';
 
-interface Pending {
+interface Pending extends Omit<OpenedFile, 'kind'> {
   key: string;
   name: string;
-  text: string;
   kind: FileKind | '';
-  institution: string;
-  problem?: string;
 }
 
+/** 파일을 읽은 결과로 화면의 값을 모두 바꾼다 (비밀번호로 연 뒤에는 locked 등이 없어져야 한다). */
+const fromOpened = (o: OpenedFile): Omit<Pending, 'key' | 'name'> => ({
+  text: o.text,
+  rows: o.rows,
+  locked: o.locked,
+  wrongPassword: o.wrongPassword,
+  kind: o.kind ?? '',
+  institution: o.institution,
+  problem: o.problem,
+});
+
 const KINDS: FileKind[] = ['bank', 'card', 'pay', 'email'];
+
+/** 화면에 '여는 중…'이 그려진 다음에 무거운 계산(암호 풀기)을 시작한다. */
+const afterPaint = () => new Promise<void>((resolve) => requestAnimationFrame(() => setTimeout(resolve, 0)));
 
 const period = (first?: string, last?: string) =>
   first && last ? `${formatDate(first, { year: true, weekday: false })} ~ ${formatDate(last, { weekday: false })}` : '';
@@ -51,10 +62,11 @@ export default function UploadPage() {
   const previews = useMemo(
     () =>
       pending.map((p) => {
+        if (p.locked) return { error: p.problem };
         if (p.problem && !p.kind) return { error: p.problem };
         if (!p.kind) return { error: '종류를 골라 주세요.' };
         try {
-          return { parsed: parseFile({ name: p.name, text: p.text, kind: p.kind, institution: p.institution }, existing, 'preview') };
+          return { parsed: parseFile({ name: p.name, text: p.text, rows: p.rows, kind: p.kind, institution: p.institution }, existing, 'preview') };
         } catch (e) {
           return { error: (e as Error).message };
         }
@@ -71,13 +83,17 @@ export default function UploadPage() {
     setResults(null);
     const next = await Promise.all(
       files.map(async (file): Promise<Pending> => {
-        const binary = /\.(xlsx?|pdf|hwp)$/i.test(file.name);
-        const text = binary ? '' : decodeText(await file.arrayBuffer());
-        const guess = guessFile(file.name, text);
-        return { key: uuid(), name: file.name, text, kind: guess.kind ?? '', institution: guess.institution, problem: guess.problem };
+        const opened = openFile(file.name, new Uint8Array(await file.arrayBuffer()));
+        return { key: uuid(), name: file.name, ...fromOpened(opened) };
       }),
     );
     setPending((list) => [...list, ...next]);
+  }
+
+  async function unlock(p: Pending, password: string) {
+    if (!p.locked) return;
+    await afterPaint();
+    update(p.key, fromOpened(openFile(p.name, p.locked, password)));
   }
 
   function update(key: string, patch: Partial<Pending>) {
@@ -94,7 +110,13 @@ export default function UploadPage() {
     setWorking(true);
     setError(undefined);
     try {
-      const files: FileInput[] = ready.map((p) => ({ name: p.name, text: p.text, kind: p.kind as FileKind, institution: p.institution.trim() || KIND_LABEL[p.kind as FileKind] }));
+      const files: FileInput[] = ready.map((p) => ({
+        name: p.name,
+        text: p.text,
+        rows: p.rows,
+        kind: p.kind as FileKind,
+        institution: p.institution.trim() || KIND_LABEL[p.kind as FileKind],
+      }));
       setResults(await data.addFiles(files));
       setPending([]);
     } catch (e) {
@@ -131,12 +153,19 @@ export default function UploadPage() {
           <p className="leading-relaxed">
             통장·카드·간편결제 거래내역 파일을 한꺼번에 골라 주세요. 여러 내역을 서로 맞춰서 같은 결제는 하나로 합치고, 돈이 어떤 경로로 나갔는지 찾아요.
           </p>
-          <input ref={inputRef} type="file" multiple accept=".csv,.json,.txt,.xls,.xlsx,text/csv,application/json" onChange={pick} className="hidden" />
+          <input
+            ref={inputRef}
+            type="file"
+            multiple
+            accept=".csv,.json,.txt,.xls,.xlsx,text/csv,application/json,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+            onChange={pick}
+            className="hidden"
+          />
           <Button className="mt-4 w-full" onClick={() => inputRef.current?.click()}>
             파일 고르기
           </Button>
           <p className="mt-2 text-xs leading-relaxed text-faint">
-            CSV 파일을 읽어요 (UTF-8, EUC-KR 모두 가능). 엑셀은 &ldquo;CSV&rdquo;로 저장해서 올려 주세요.{' '}
+            엑셀(.xlsx)과 CSV 파일을 읽어요. 비밀번호가 걸린 엑셀은 비밀번호를 넣으면 열려요.{' '}
             {mode === 'local' ? '파일은 이 브라우저 안에서만 읽고 저장해요.' : '읽은 내역은 내 계정에만 저장돼요.'}
           </p>
         </Card>
@@ -155,36 +184,42 @@ export default function UploadPage() {
                         ✕
                       </button>
                     </div>
-                    <div className="mt-3 grid grid-cols-[auto_1fr] items-center gap-x-3 gap-y-2 text-sm">
-                      <label htmlFor={`kind-${p.key}`} className="text-sub">종류</label>
-                      <select id={`kind-${p.key}`} value={p.kind} onChange={(e) => changeKind(p, e.target.value as FileKind | '')} className="h-10 rounded-lg bg-bg px-2">
-                        <option value="">골라 주세요</option>
-                        {KINDS.map((k) => (
-                          <option key={k} value={k}>
-                            {k === 'email' ? '메일 (가상 데이터 형식)' : `${KIND_LABEL[k]} 내역`}
-                          </option>
-                        ))}
-                      </select>
-                      <label htmlFor={`inst-${p.key}`} className="text-sub">기관</label>
-                      <input
-                        id={`inst-${p.key}`}
-                        list={p.kind ? `inst-list-${p.kind}` : undefined}
-                        value={p.institution}
-                        onChange={(e) => update(p.key, { institution: e.target.value })}
-                        placeholder="예: 농협은행"
-                        className="h-10 min-w-0 rounded-lg bg-bg px-2"
-                      />
-                    </div>
-                    {preview.error ? (
-                      <p className="mt-3 text-sm text-danger">{preview.error}</p>
+                    {p.locked ? (
+                      <PasswordForm id={`pw-${p.key}`} message={p.problem} wrong={p.wrongPassword} onUnlock={(password) => unlock(p, password)} />
                     ) : (
-                      <p className="mt-3 text-sm text-sub">
-                        {preview.parsed!.total}줄 · {period(preview.parsed!.upload.firstDate, preview.parsed!.upload.lastDate) || '기간 없음'}
-                        {preview.parsed!.skipped > 0 && ` · 거래가 아닌 ${preview.parsed!.skipped}줄 건너뜀`}
-                        {preview.parsed!.upload.count === 0
-                          ? ' · 이미 올린 내역이라 새로 추가할 줄이 없어요'
-                          : preview.parsed!.duplicates > 0 && ` · 이미 올린 ${preview.parsed!.duplicates}줄은 빼고 추가`}
-                      </p>
+                      <>
+                        <div className="mt-3 grid grid-cols-[auto_1fr] items-center gap-x-3 gap-y-2 text-sm">
+                          <label htmlFor={`kind-${p.key}`} className="text-sub">종류</label>
+                          <select id={`kind-${p.key}`} value={p.kind} onChange={(e) => changeKind(p, e.target.value as FileKind | '')} className="h-10 rounded-lg bg-bg px-2">
+                            <option value="">골라 주세요</option>
+                            {KINDS.map((k) => (
+                              <option key={k} value={k}>
+                                {k === 'email' ? '메일 (가상 데이터 형식)' : `${KIND_LABEL[k]} 내역`}
+                              </option>
+                            ))}
+                          </select>
+                          <label htmlFor={`inst-${p.key}`} className="text-sub">기관</label>
+                          <input
+                            id={`inst-${p.key}`}
+                            list={p.kind ? `inst-list-${p.kind}` : undefined}
+                            value={p.institution}
+                            onChange={(e) => update(p.key, { institution: e.target.value })}
+                            placeholder="예: 농협은행"
+                            className="h-10 min-w-0 rounded-lg bg-bg px-2"
+                          />
+                        </div>
+                        {preview.error ? (
+                          <p className="mt-3 text-sm text-danger">{preview.error}</p>
+                        ) : (
+                          <p className="mt-3 text-sm text-sub">
+                            {preview.parsed!.total}줄 · {period(preview.parsed!.upload.firstDate, preview.parsed!.upload.lastDate) || '기간 없음'}
+                            {preview.parsed!.skipped > 0 && ` · 거래가 아닌 ${preview.parsed!.skipped}줄 건너뜀`}
+                            {preview.parsed!.upload.count === 0
+                              ? ' · 이미 올린 내역이라 새로 추가할 줄이 없어요'
+                              : preview.parsed!.duplicates > 0 && ` · 이미 올린 ${preview.parsed!.duplicates}줄은 빼고 추가`}
+                          </p>
+                        )}
+                      </>
                     )}
                   </Card>
                 );
@@ -260,10 +295,10 @@ export default function UploadPage() {
           <ul className="space-y-1.5">
             <li>· <b className="text-ink">통장</b>: 인터넷뱅킹 거래내역 조회에서 저장한 파일 (날짜, 금액, 내용 열이 있으면 돼요)</li>
             <li>· <b className="text-ink">카드</b>: 카드사 이용내역 (이용일자, 가맹점명, 이용금액)</li>
-            <li>· <b className="text-ink">간편결제</b>: 카카오페이·네이버페이 결제내역 (결제수단 열이 있으면 어느 계좌·카드에서 나갔는지 맞춰요)</li>
+            <li>· <b className="text-ink">간편결제</b>: 카카오페이·네이버페이 결제내역이나 페이 머니 거래내역 (결제수단·은행 열로 어느 계좌·카드에서 나갔는지 맞춰요)</li>
           </ul>
           <p className="mt-3 text-xs text-faint">
-            은행·카드사마다 열 이름이 달라서, 읽지 못하는 파일이 있으면 머리글(첫 줄)을 알려 주세요. 엑셀·PDF 형식은 실제 파일을 확인한 뒤 지원할 예정이에요.
+            실제 파일로 확인한 형식: 토스뱅크 거래내역, 카카오페이 머니 거래내역 (엑셀). 은행·카드사마다 열 이름이 달라서, 읽지 못하는 파일이 있으면 머리글(첫 줄)을 알려 주세요. PDF는 읽지 못해요.
           </p>
         </Card>
 
@@ -287,6 +322,43 @@ export default function UploadPage() {
         </Card>
       </div>
     </>
+  );
+}
+
+/** 비밀번호가 걸린 엑셀을 여는 칸. 비밀번호는 이 칸에만 잠깐 두고, 열어 본 뒤에는 지운다. */
+function PasswordForm({ id, message, wrong, onUnlock }: { id: string; message?: string; wrong?: boolean; onUnlock: (password: string) => Promise<void> }) {
+  const [password, setPassword] = useState('');
+  const [busy, setBusy] = useState(false);
+
+  async function submit(e: FormEvent) {
+    e.preventDefault();
+    setBusy(true);
+    await onUnlock(password);
+    setPassword('');
+    setBusy(false);
+  }
+
+  return (
+    <form className="mt-3" onSubmit={submit}>
+      <label htmlFor={id} className={`text-sm ${wrong ? 'text-danger' : 'text-sub'}`}>
+        {message}
+      </label>
+      <div className="mt-2 flex gap-2">
+        <input
+          id={id}
+          type="password"
+          autoComplete="off"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          placeholder="파일 비밀번호 (보통 생년월일)"
+          className="h-11 min-w-0 flex-1 rounded-lg bg-bg px-2"
+        />
+        <Button type="submit" disabled={!password || busy}>
+          {busy ? '여는 중…' : '열기'}
+        </Button>
+      </div>
+      <p className="mt-2 text-xs text-faint">비밀번호는 이 기기에서 파일을 여는 데만 쓰고 저장하지 않아요.</p>
+    </form>
   );
 }
 

@@ -85,3 +85,20 @@ test('간편결제 내역까지 올리면 통장의 "카카오페이" 정기 출
   assert.deepEqual(melon.sources, ['bank', 'pay']);
   assert.equal(both.stats.mergedTransactions, 6);
 });
+
+test('충전한 통장 내역을 안 올렸어도 머니 내역의 은행 열로 경로를 만든다', () => {
+  const topup = payTx('2026-10-07', '농협 302000******', 2900, '농협', { time: '10:00:00', kind: 'topup', direction: 'in' });
+  const pay = payTx('2026-10-07', '이모티콘 플러스', 2900, '카카오페이 머니', { time: '10:00:00' });
+  const { ledger, internal } = reconcile([topup, pay]);
+  assert.deepEqual(internal.map((t) => t.id), [topup.id]);
+  assert.deepEqual(ledger.map((t) => t.path), [['농협은행 계좌', '카카오페이 머니']]);
+});
+
+test('가맹점명에 간편결제 앱 이름이 같이 찍히면 경로에 그 앱을 넣는다', () => {
+  const kakao = bankTx('2026-10-07', '카카오구독료_카카오페이', 2900, '체크카드결제', { institution: '토스뱅크' });
+  const youtube = cardTx('2026-10-07', 'GOOGLE*YOUTUBEPREMIUM', 14900, SHINHAN);
+  const { ledger } = reconcile([kakao, youtube]);
+  assert.deepEqual(ledger.find((t) => t.id === kakao.id)?.path, ['토스뱅크 계좌', '카카오페이']);
+  // 앱스토어 이름은 청구 표기일 뿐이라 경로에 넣지 않는다.
+  assert.deepEqual(ledger.find((t) => t.id === youtube.id)?.path, ['신한카드']);
+});
