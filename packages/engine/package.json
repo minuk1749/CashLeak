@@ -6,6 +6,7 @@
   "description": "거래내역과 메일 영수증으로 정기 구독을 찾아내는 탐지 엔진",
   "exports": {
     ".": "./src/index.ts",
+    "./mail": "./src/mail/index.ts",
     "./sim": "./sim/index.ts"
   },
   "engines": {
@@ -16,11 +17,14 @@
     "detect": "node scripts/detect.ts",
     "evaluate": "node scripts/evaluate.ts",
     "test": "node --test \"test/**/*.test.ts\"",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "fetch-mail": "node scripts/fetch-mail.ts"
   },
   "dependencies": {
     "@noble/ciphers": "^2.4.0",
     "@noble/hashes": "^2.4.0",
-    "fflate": "^0.8.3"
+    "fflate": "^0.8.3",
+    "imapflow": "^2.9.1",
+    "postal-mime": "^4.1.4"
   }
 }

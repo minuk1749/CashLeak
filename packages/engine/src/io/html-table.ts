@@ -7,9 +7,15 @@ export function looksLikeHtmlTable(text: string): boolean {
   return /^\s*</.test(text) && /<t[dh][\s>]/i.test(text);
 }
 
-const ENTITIES: Record<string, string> = { amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ' };
+const ENTITIES: Record<string, string> = {
+  amp: '&', lt: '<', gt: '>', quot: '"', apos: "'", nbsp: ' ',
+  // 메일 본문에 자주 나오는 것들. 보이지 않는 글자(zwnj 등)는 지운다.
+  zwnj: '', zwj: '', shy: '', middot: '·', bull: '•', hellip: '…', ndash: '–', mdash: '—',
+  lsquo: '‘', rsquo: '’', ldquo: '“', rdquo: '”', copy: '©', reg: '®', trade: '™', rarr: '→', times: '×',
+};
 
-function decodeEntities(text: string): string {
+/** HTML 문자 참조(&amp;, &#54620;, &#xD55C;)를 글자로 바꾼다. */
+export function decodeEntities(text: string): string {
   return text.replace(/&(#x[0-9a-f]+|#\d+|[a-z]+);/gi, (whole, name: string) => {
     if (name[0] !== '#') return ENTITIES[name.toLowerCase()] ?? whole;
     const code = name[1] === 'x' || name[1] === 'X' ? parseInt(name.slice(2), 16) : Number(name.slice(1));

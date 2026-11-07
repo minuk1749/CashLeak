@@ -22,6 +22,8 @@ const EN_DATE = /([A-Z][a-z]{2,8})\.? (\d{1,2}), (\d{4})/;
 const MONTHS = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec'];
 const ITEM_LABEL = /^(?:상품명|항목|구독 상품|Item|Product)\s*[:：]\s*(.+)$/i;
 const ITEM_PERIOD = /^(.+?)\s*\((?:월간|연간|매월|매년|1개월|1년|Monthly|Annual|Yearly)\)/i;
+/** '상품명: 헬로북스 멤버십 (월간)'의 '(월간)'처럼 이름 뒤에 붙은 주기 */
+const PERIOD_SUFFIX = /\s*\((?:월간|연간|매월|매년|1개월|1년|Monthly|Annual|Yearly)\)\s*$/i;
 
 interface Identity {
   serviceId: string;
@@ -42,8 +44,30 @@ function senderName(from: string): string {
 
 const domainMatches = (domain: string, list: string[]) => list.some((d) => domain === d || domain.endsWith(`.${d}`));
 
+/** 보낸 곳이 알려진 서비스인지, 앱스토어·간편결제 같은 중개자인지, 그 밖의 곳인지 */
+export function senderKind(from: string): 'service' | 'intermediary' | 'other' | null {
+  const domain = senderDomain(from);
+  if (!domain) return null;
+  if (SERVICES.some((s) => domainMatches(domain, s.senders))) return 'service';
+  if (INTERMEDIARIES.some((i) => domainMatches(domain, i.senders))) return 'intermediary';
+  return 'other';
+}
+
+/**
+ * 본문을 받기 전에 보낸 곳과 제목만 보고 판단한다. false인 메일은 parseEmail도 반드시 null을 돌려준다.
+ * 메일함에서 본문을 받을 메일을 줄이는 데 쓴다 (예: 쇼핑몰 주문 영수증).
+ */
+export function couldBeReceipt(from: string, subject: string): boolean {
+  if (NEGATIVE.test(subject)) return false;
+  const kind = senderKind(from);
+  if (!kind) return false;
+  // 알려진 서비스·중개자가 아닌 곳의 메일은 제목에 구독 표현이 있어야 읽는다 (parseEmail의 generic).
+  return kind !== 'other' || HINT.test(subject);
+}
+
 function identify(msg: EmailMessage, lines: string[]): Identity | null {
   const domain = senderDomain(msg.from);
+  if (!domain) return null;
   const direct = SERVICES.find((s) => domainMatches(domain, s.senders));
   if (direct) return { serviceId: direct.id, serviceName: direct.name, nameLines: [] };
   const via = INTERMEDIARIES.find((i) => domainMatches(domain, i.senders));
@@ -54,12 +78,11 @@ function identify(msg: EmailMessage, lines: string[]): Identity | null {
       if (nameLines.length) return { serviceId: s.id, serviceName: s.name, via: via.id, nameLines };
     }
     for (const line of lines) {
-      const item = line.match(ITEM_LABEL)?.[1] ?? line.match(ITEM_PERIOD)?.[1];
+      const item = (line.match(ITEM_LABEL)?.[1] ?? line.match(ITEM_PERIOD)?.[1])?.replace(PERIOD_SUFFIX, '');
       if (item) return { serviceId: appKey(item.trim()), serviceName: item.trim(), via: via.id, nameLines: [line] };
     }
     return null;
   }
-  if (!domain) return null;
   const name = senderName(msg.from) || domain;
   return { serviceId: `mail:${domain}`, serviceName: name, generic: true, nameLines: [] };
 }

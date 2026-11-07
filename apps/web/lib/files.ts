@@ -94,7 +94,7 @@ export function openFile(name: string, bytes: Uint8Array, password?: string): Op
   }
 }
 
-/** 메일은 3단계에서 Gmail·네이버메일을 직접 연결한다. 지금은 가상 데이터 형식(JSON)만 받는다. */
+/** 메일 목록(JSON): '메일에서 영수증 가져오기'(서버 API), 명령어(npm run fetch-mail), 가상 데이터가 이 형식으로 만든다. */
 export function parseEmailJson(text: string): EmailMessage[] {
   let data: unknown;
   try {
