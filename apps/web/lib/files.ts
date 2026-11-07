@@ -1,10 +1,13 @@
 import {
+  decodeText,
   detectKind,
   guessInstitution,
   importRows,
   kstDate,
+  looksLikeHtmlTable,
   looksLikeSpreadsheet,
   parseCsv,
+  readHtmlTable,
   readXlsx,
   SpreadsheetError,
   transactionSheet,
@@ -22,15 +25,6 @@ export const INSTITUTIONS: Record<FileKind, string[]> = {
   pay: ['카카오페이', '네이버페이', '토스페이', '페이코'],
   email: ['Gmail', '네이버메일'],
 };
-
-/** 은행·카드사 파일은 EUC-KR(CP949)로 저장된 경우가 많다. UTF-8로 안 읽히면 EUC-KR로 읽는다. */
-export function decodeText(buf: ArrayBuffer | Uint8Array): string {
-  try {
-    return new TextDecoder('utf-8', { fatal: true }).decode(buf).replace(/^﻿/, '');
-  } catch {
-    return new TextDecoder('euc-kr').decode(buf);
-  }
-}
 
 export interface FileGuess {
   kind: FileKind | null;
@@ -67,7 +61,7 @@ export function guessFile(name: string, text: string): FileGuess {
 export interface OpenedFile extends FileGuess {
   /** CSV·JSON 파일의 글자 */
   text: string;
-  /** 엑셀 파일에서 읽은 표 */
+  /** 엑셀 파일(HTML 표로 된 .xls 포함)에서 읽은 표 */
   rows?: string[][];
   /** 비밀번호를 넣어야 열리는 엑셀 파일. 비밀번호를 받으면 이 내용으로 openFile을 다시 부른다. */
   locked?: Uint8Array;
@@ -77,12 +71,17 @@ export interface OpenedFile extends FileGuess {
 
 /**
  * 고른 파일을 읽는다. 엑셀은 표로, CSV·JSON은 글자로 읽는다.
+ * 농협처럼 HTML 표를 .xls 이름으로 주는 파일은 글자로 읽은 뒤 표로 바꾼다.
  * 비밀번호가 걸린 엑셀은 password가 맞아야 열리고, 없거나 틀리면 locked에 파일 내용을 담아 돌려준다.
  * 비밀번호는 이 기기 안에서 파일을 여는 데만 쓰고 어디에도 저장하지 않는다.
  */
 export function openFile(name: string, bytes: Uint8Array, password?: string): OpenedFile {
   if (!looksLikeSpreadsheet(bytes)) {
     const text = decodeText(bytes);
+    if (looksLikeHtmlTable(text)) {
+      const rows = readHtmlTable(text);
+      return { text: '', rows, ...guessTable(name, rows) };
+    }
     return { text, ...guessFile(name, text) };
   }
   try {

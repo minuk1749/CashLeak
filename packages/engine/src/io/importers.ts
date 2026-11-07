@@ -3,19 +3,20 @@ import { parseCsv } from './csv.ts';
 
 // 은행·카드사·간편결제마다 내보내기 형식이 다르다. 머리글 이름 후보로 열을 찾기 때문에
 // 열 이름만 비슷하면 그대로 읽히고, 다르면 후보를 추가하면 된다.
-// 실제 파일로 확인한 형식: 토스뱅크 거래내역(.xlsx), 카카오페이 머니 거래내역(.xlsx).
-// 엑셀 파일은 xlsx.ts가 표(string[][])로 바꾼 뒤 importRows로 읽는다.
+// 실제 파일로 확인한 형식: 토스뱅크 거래내역(.xlsx), 카카오페이 머니 거래내역(.xlsx), 농협 입출금거래내역조회(HTML 표로 된 .xls).
+// 엑셀 파일은 xlsx.ts, HTML 표는 html-table.ts가 표(string[][])로 바꾼 뒤 importRows로 읽는다.
 
 const BANK_COLUMNS = {
   datetime: ['거래일시', '거래일자', '일시', '날짜'],
   time: ['거래시간', '시간'],
   direction: ['구분', '입출금구분'],
-  method: ['거래유형', '거래구분'],
-  merchant: ['내용', '적요', '받는분', '거래처', '기재내용', '거래내용'],
+  // 농협은 '거래내용'에 거래 방식(실시간이체, NH체크 등)을, '거래기록사항'에 가맹점·받는 분을 적는다.
+  method: ['거래유형', '거래구분', '거래내용'],
+  merchant: ['거래기록사항', '내용', '적요', '받는분', '거래처', '기재내용', '거래내용'],
   amount: ['거래금액', '금액'],
   withdrawal: ['출금액', '출금', '출금금액', '찾으신금액'],
   deposit: ['입금액', '입금', '입금금액', '맡기신금액'],
-  memo: ['메모', '비고', '거래기록사항'],
+  memo: ['메모', '비고', '거래메모'],
 };
 
 const CARD_COLUMNS = {
@@ -43,8 +44,14 @@ const PAY_COLUMNS = {
 /** 간편결제 내역에만 있는 열. 카드 이용내역에도 '결제방법'(일시불·할부) 열이 있어서 따로 둔다. */
 const PAY_ONLY_COLUMNS = ['결제수단', '출금수단', '지불수단', '계좌정보/결제정보'];
 
-/** 머리글 위 안내 줄에 적힌 예금주 이름 (토스뱅크: '성명') */
+/** 머리글 위 안내 줄에 적힌 예금주 이름 (토스뱅크: '성명', 농협: '예금주명') */
 const HOLDER_LABELS = ['성명', '예금주', '예금주명', '고객명'];
+
+/**
+ * 다른 은행의 내 계좌와 오간 돈은 '토뱅 홍길동'처럼 은행 이름 뒤에 예금주 이름이 찍힌다.
+ * 다른 은행 앱이 오픈뱅킹으로 가져간 돈은 '카뱅오픈홍길동'처럼 찍힌다.
+ */
+const BANK_SHORT_NAME = /^(토스뱅크|토뱅|토스|카카오뱅크|카뱅|케이뱅크|케뱅|국민|KB|신한|우리|하나|농협|NH|기업|IBK|SC제일|SC|씨티|새마을|우체국|수협|신협|부산|경남|대구|IM|광주|전북|제주|산업)(은행)?(오픈)?$/i;
 
 export interface ImportOptions {
   /** 거래 id 앞에 붙일 값. 파일마다 달라야 한다. */
@@ -59,11 +66,13 @@ type Columns<T> = { [K in keyof T]: number };
 
 const clean = (h: string) => h.replace(/\s|\(원\)/g, '');
 
+/** 열 이름 후보가 여럿 있으면 앞에 적은 후보를 고른다. */
 function locate<T extends Record<string, string[]>>(header: string[], spec: T): Columns<T> {
   const names = header.map(clean);
   const out = {} as Columns<T>;
   for (const key of Object.keys(spec) as (keyof T)[]) {
-    out[key] = names.findIndex((h) => spec[key].includes(h));
+    const name = spec[key].find((n) => names.includes(n));
+    out[key] = name ? names.indexOf(name) : -1;
   }
   return out;
 }
@@ -90,6 +99,13 @@ function holderName(preamble: string[][]): string | undefined {
     if (name) return name;
   }
   return undefined;
+}
+
+/** 예금주 본인에게 보낸 돈인지: 이름이 같거나, 다른 은행 이름 뒤에 예금주 이름이 붙은 경우 */
+function toHolder(merchant: string, holder: string | undefined): boolean {
+  if (!holder) return false;
+  if (merchant === holder) return true;
+  return merchant.endsWith(holder) && BANK_SHORT_NAME.test(merchant.slice(0, -holder.length).trim());
 }
 
 const BANK_REQUIRED: (keyof typeof BANK_COLUMNS)[][] = [['datetime'], ['amount', 'withdrawal', 'deposit']];
@@ -134,6 +150,8 @@ function parseDateTime(raw: string, timeRaw = ''): { date: string; time?: string
 export function importBankRows(all: string[][], options: ImportOptions = {}): Transaction[] {
   const { idPrefix = 'bank', institution } = options;
   const { col, rows, preamble } = requireTable(all, BANK_COLUMNS, BANK_REQUIRED, '통장 내역');
+  // '거래내용' 하나뿐이면 그 열은 가맹점명이고 거래 방식 열은 없다.
+  if (col.method === col.merchant) col.method = -1;
   const holder = holderName(preamble);
   let n = 0;
   return readRows(rows, options, (row): Transaction => {
@@ -141,9 +159,10 @@ export function importBankRows(all: string[][], options: ImportOptions = {}): Tr
     let amount = parseAmount(cell(row, col.amount));
     let direction: 'out' | 'in' = amount < 0 ? 'out' : 'in';
     if (col.withdrawal >= 0 || col.deposit >= 0) {
-      const out = parseAmount(cell(row, col.withdrawal));
-      direction = out > 0 ? 'out' : 'in';
-      amount = out > 0 ? out : parseAmount(cell(row, col.deposit));
+      // 칸에 적힌 음수는 반대 방향이다 (농협은 체크카드 승인 취소를 출금 칸에 음수로 적는다).
+      const net = parseAmount(cell(row, col.withdrawal)) - parseAmount(cell(row, col.deposit));
+      direction = net > 0 ? 'out' : 'in';
+      amount = Math.abs(net);
     }
     const label = cell(row, col.direction);
     if (label) direction = /출금|지급/.test(label) ? 'out' : 'in';
@@ -155,7 +174,7 @@ export function importBankRows(all: string[][], options: ImportOptions = {}): Tr
       institution,
       date,
       time,
-      merchant: holder && merchant === holder ? `${merchant} (내 계좌)` : merchant,
+      merchant: toHolder(merchant, holder) ? `${merchant} (내 계좌)` : merchant,
       amount: Math.abs(amount),
       direction,
       method: cell(row, col.method) || undefined,

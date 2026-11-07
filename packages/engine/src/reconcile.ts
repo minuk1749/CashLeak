@@ -124,14 +124,14 @@ export function reconcile(transactions: Transaction[]): ReconcileResult {
     }
   }
 
-  // 3) 체크카드: 통장과 카드 이용내역에 둘 다 찍히므로 카드 쪽에 합친다.
+  // 3) 체크카드: 통장과 카드 이용내역에 둘 다 찍히므로 카드 쪽에 합친다. (토스뱅크 '체크카드결제', 농협 'NH체크')
   const cardIndex = new Map<string, Transaction[]>();
   const keyOf = (t: Transaction) => `${t.date}|${t.amount}|${t.direction}|${matchMerchant(t.merchant).key}`;
   for (const c of others) {
     if (c.source === 'card' && !consumed.has(c.id)) cardIndex.set(keyOf(c), [...(cardIndex.get(keyOf(c)) ?? []), c]);
   }
   for (const b of others) {
-    if (b.source !== 'bank' || !/체크카드/.test(b.method ?? '') || consumed.has(b.id) || internal.has(b.id)) continue;
+    if (b.source !== 'bank' || !/체크/.test(b.method ?? '') || consumed.has(b.id) || internal.has(b.id)) continue;
     const card = cardIndex.get(keyOf(b))?.shift();
     if (!card) continue;
     consumed.add(b.id);

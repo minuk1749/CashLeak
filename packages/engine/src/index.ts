@@ -32,6 +32,8 @@ export {
   type ImportOptions,
 } from './io/importers.ts';
 export { parseCsv, toCsv } from './io/csv.ts';
+export { looksLikeHtmlTable, readHtmlTable } from './io/html-table.ts';
+export { decodeText } from './io/text.ts';
 export {
   isEncryptedSpreadsheet,
   looksLikeSpreadsheet,
