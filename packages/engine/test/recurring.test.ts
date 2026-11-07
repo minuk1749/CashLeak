@@ -75,6 +75,19 @@ test('결제가 끊기면 해지로 추정한다', () => {
   assert.equal(series[0].active, false);
 });
 
+test('세 번 연달아 주기에 맞으면 가입한 날의 첫 결제가 어긋나도 구독으로 찾는다', () => {
+  const dates = ['2026-07-02', '2026-08-15', '2026-09-15', '2026-10-15'];
+  const { series } = detectRecurring(dates.map((d) => bankTx(d, '헬로북스 멤버십', 3300, '실시간이체')), { asOf });
+  assert.equal(series.length, 1);
+  assert.equal(series[0].transactions.length, 4);
+  assert.deepEqual(series[0].gaps, { regular: 2, skipped: 0, irregular: 1 });
+  assert.equal(series[0].nextDate, '2026-11-15');
+  assert.equal(series[0].active, true);
+  // 두 번만 맞고 하나가 어긋나면 우연일 수 있어 찾지 않는다.
+  const few = dates.slice(0, 3).map((d) => bankTx(d, '헬로북스 멤버십', 3300, '실시간이체'));
+  assert.equal(detectRecurring(few, { asOf }).series.length, 0);
+});
+
 test('1년 간격 결제는 연간 구독으로 본다', () => {
   const txs = ['2025-06-12', '2026-06-12'].map((d) => cardTx(d, 'MICROSOFT*STORE', 89000));
   const { series } = detectRecurring(txs, { asOf });
