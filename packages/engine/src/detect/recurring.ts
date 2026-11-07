@@ -252,7 +252,8 @@ function fitMonthly(dates: string[], tol: number): CycleFit | null {
     if (!best || betterFit(fit, best)) best = fit;
   }
   if (!best || best.regular === 0) return null;
-  const allowedIrregular = dates.length >= 5 ? 1 : 0;
+  // 세 번 이상 연달아 주기에 맞으면 맞지 않는 결제 한 번(가입한 날의 첫 결제, 같은 금액의 다른 결제)은 봐준다.
+  const allowedIrregular = dates.length >= 5 || best.regular >= 2 ? 1 : 0;
   if (best.irregular > allowedIrregular || best.skipped > 1) return null;
   return best;
 }

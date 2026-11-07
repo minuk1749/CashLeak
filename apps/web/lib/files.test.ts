@@ -1,14 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
-import { decodeText, guessFile, openFile, parseFile } from './files.ts';
-
-test('UTF-8로 안 읽히는 파일은 EUC-KR로 읽는다', () => {
-  // "농협은행,카카오페이"를 EUC-KR로 저장한 바이트
-  const euckr = new Uint8Array([179, 243, 199, 249, 192, 186, 199, 224, 44, 196, 171, 196, 171, 191, 192, 198, 228, 192, 204]);
-  assert.equal(decodeText(euckr.buffer), '농협은행,카카오페이');
-  assert.equal(decodeText(new TextEncoder().encode('﻿거래일시').buffer as ArrayBuffer), '거래일시');
-});
+import { guessFile, openFile, parseFile } from './files.ts';
 
 test('파일 이름과 머리글로 종류와 기관을 추측하고, 못 읽는 형식은 이유를 알려 준다', () => {
   assert.deepEqual(guessFile('NH_거래내역.csv', '거래일시,구분,내용,거래금액,거래후잔액\n'), { kind: 'bank', institution: '농협은행' });
@@ -76,4 +69,17 @@ test('비밀번호 없는 엑셀은 바로 읽고, CSV는 글자로 읽는다', 
   const csv = openFile('nh.csv', new TextEncoder().encode('거래일시,구분,내용,거래금액,거래후잔액\n'));
   assert.deepEqual([csv.kind, csv.institution, csv.rows], ['bank', '농협은행', undefined]);
   assert.match(openFile('내역.pdf', new TextEncoder().encode('%PDF-1.7')).problem!, /PDF/);
+});
+
+test('농협처럼 HTML 표를 .xls 이름으로 준 파일은 표로 읽는다', () => {
+  const name = '농협_입출금거래내역조회_20261101_090000.xls';
+  const opened = openFile(name, fixture('bank-nh-html.xls'));
+  assert.deepEqual([opened.kind, opened.institution, opened.problem, opened.locked], ['bank', '농협은행', undefined, undefined]);
+  const parsed = parseFile({ name, text: opened.text, rows: opened.rows, kind: 'bank', institution: opened.institution }, new Set(), 'u1');
+  assert.equal(parsed.transactions.length, 10);
+  assert.deepEqual([parsed.upload.firstDate, parsed.upload.lastDate], ['2026-10-05', '2026-10-28']);
+  assert.deepEqual(
+    parsed.transactions.filter((t) => t.merchant.endsWith('(내 계좌)')).map((t) => t.merchant),
+    ['토뱅 홍길동 (내 계좌)', '홍길동 (내 계좌)', '카뱅오픈홍길동 (내 계좌)'],
+  );
 });

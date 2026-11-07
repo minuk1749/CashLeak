@@ -1,6 +1,7 @@
 // 폴더 안의 거래내역(CSV·엑셀)과 메일(JSON)로 구독을 찾는다.
 // 사용법: node scripts/detect.ts [데이터 폴더] [--as-of YYYY-MM-DD]
-//   *.csv, *.xlsx → 머리글을 보고 통장·카드·간편결제 내역을 구분하고, 파일 이름으로 기관을 추측한다.
+//   *.csv, *.xlsx, *.xls → 머리글을 보고 통장·카드·간편결제 내역을 구분하고, 파일 이름으로 기관을 추측한다.
+//   .xls는 농협처럼 HTML 표로 된 파일만 읽는다 (예전 엑셀 형식은 못 읽음).
 //   비밀번호가 걸린 엑셀은 환경 변수 CASHLEAK_PASSWORDS(쉼표로 여러 개)의 비밀번호를 차례로 넣어 본다.
 //   emails-*.json → 메일
 import { mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -8,7 +9,9 @@ import { join, resolve } from 'node:path';
 import type { EmailMessage, Transaction } from '../src/types.ts';
 import { parseCsv } from '../src/io/csv.ts';
 import { detectKind, guessInstitution, importRows, transactionSheet } from '../src/io/importers.ts';
-import { isEncryptedSpreadsheet, readXlsx, SpreadsheetError } from '../src/io/xlsx.ts';
+import { looksLikeHtmlTable, readHtmlTable } from '../src/io/html-table.ts';
+import { decodeText } from '../src/io/text.ts';
+import { isEncryptedSpreadsheet, looksLikeSpreadsheet, readXlsx, SpreadsheetError } from '../src/io/xlsx.ts';
 import { runPipeline } from '../src/pipeline.ts';
 import { renderMarkdown } from '../src/report.ts';
 
@@ -36,13 +39,22 @@ function readSpreadsheet(file: string, bytes: Uint8Array): string[][] | undefine
   return undefined;
 }
 
+/** 엑셀 파일이거나, 엑셀 이름을 단 HTML 표 */
+function readTableFile(file: string, bytes: Uint8Array): string[][] | undefined {
+  if (looksLikeSpreadsheet(bytes)) return readSpreadsheet(file, bytes);
+  const text = decodeText(bytes);
+  if (looksLikeHtmlTable(text)) return readHtmlTable(text);
+  console.warn(`${file}: 읽을 수 없는 형식이라 건너뜀`);
+  return undefined;
+}
+
 const transactions: Transaction[] = [];
 const emails: EmailMessage[] = [];
 for (const file of readdirSync(dataDir).sort()) {
   const path = join(dataDir, file);
   let rows: string[][] | undefined;
-  if (/\.csv$/i.test(file)) rows = parseCsv(readFileSync(path, 'utf8'));
-  else if (/\.xlsx$/i.test(file)) rows = readSpreadsheet(file, new Uint8Array(readFileSync(path)));
+  if (/\.csv$/i.test(file)) rows = parseCsv(decodeText(readFileSync(path)));
+  else if (/\.(xlsx|xls|html?)$/i.test(file)) rows = readTableFile(file, new Uint8Array(readFileSync(path)));
   else if (/^emails-.*\.json$/i.test(file)) emails.push(...(JSON.parse(readFileSync(path, 'utf8')) as EmailMessage[]));
   if (!rows) continue;
   const kind = detectKind(rows);

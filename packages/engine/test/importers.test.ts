@@ -1,7 +1,10 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { readHtmlTable } from '../src/io/html-table.ts';
 import { detectCsvKind, detectKind, guessInstitution, importBankCsv, importPayCsv, importRows } from '../src/io/importers.ts';
-import { exclusionReason } from '../src/merchants.ts';
+import { decodeText } from '../src/io/text.ts';
+import { exclusionReason, looksLikePersonalTransfer } from '../src/merchants.ts';
 
 test('머리글로 통장·카드·간편결제 내역을 구분한다', () => {
   assert.equal(detectCsvKind('거래일시,구분,거래유형,내용,거래금액,거래후잔액\n'), 'bank');
@@ -25,18 +28,22 @@ test('파일 이름으로 기관을 추측한다', () => {
 
 test('출금·입금 열이 따로 있는 통장 내역을 읽는다', () => {
   const csv = [
-    '거래일시,출금금액(원),입금금액(원),거래후잔액(원),거래내용,거래기록사항',
-    '2026/10/02 09:15:03,"10,900",0,"1,000,000",카카오페이,',
-    '2026/10/25 10:00:00,0,"3,200,000","4,200,000",급여,(주)테크컴퍼니',
+    '거래일시,출금금액(원),입금금액(원),거래후잔액(원),거래내용,거래기록사항,거래메모',
+    '2026/10/02 09:15:03,"10,900",0,"1,000,000",NH체크,멜론,',
+    '2026/10/25 10:00:00,0,"3,200,000","4,200,000",타행이체,(주)테크컴퍼니,10월 급여',
+    // 체크카드 승인 취소는 출금 칸에 음수로 찍힌다.
+    '2026/10/26 23:10:00,"-4,800",0,"4,204,800",NH체크,카카오T택시,',
   ].join('\n');
-  const [out, income] = importBankCsv(csv, { idPrefix: 'nh', institution: '농협은행' });
+  const [out, income, canceled] = importBankCsv(csv, { idPrefix: 'nh', institution: '농협은행' });
   assert.deepEqual(
-    { date: out.date, time: out.time, amount: out.amount, direction: out.direction, merchant: out.merchant, institution: out.institution },
-    { date: '2026-10-02', time: '09:15:03', amount: 10900, direction: 'out', merchant: '카카오페이', institution: '농협은행' },
+    { date: out.date, time: out.time, amount: out.amount, direction: out.direction, merchant: out.merchant, method: out.method, institution: out.institution },
+    { date: '2026-10-02', time: '09:15:03', amount: 10900, direction: 'out', merchant: '멜론', method: 'NH체크', institution: '농협은행' },
   );
-  assert.equal(income.direction, 'in');
-  assert.equal(income.amount, 3200000);
-  assert.equal(income.memo, '(주)테크컴퍼니');
+  assert.deepEqual([income.direction, income.amount, income.merchant, income.memo], ['in', 3200000, '(주)테크컴퍼니', '10월 급여']);
+  assert.deepEqual([canceled.direction, canceled.amount, canceled.merchant], ['in', 4800, '카카오T택시']);
+  // '거래내용' 열 하나뿐이면 그 열이 가맹점·받는 분이다.
+  const [only] = importBankCsv('거래일시,출금금액,입금금액,거래내용\n2026-10-02 09:15:03,10900,0,멜론\n');
+  assert.deepEqual([only.merchant, only.method], ['멜론', undefined]);
 });
 
 test('간편결제 내역: 충전·송금을 구분하고 취소된 결제는 뺀다', () => {
@@ -143,4 +150,36 @@ test('카카오페이 머니 형식: [+]/[-] 표시로 방향을, 은행 열로 
     txs.filter((t) => t.direction === 'out').map((t) => exclusionReason(t)),
     [undefined, '내 계좌로 옮긴 돈', '내 계좌로 옮긴 돈'],
   );
+});
+
+test('농협 형식: HTML 표로 된 .xls에서 거래 방식과 상대를 나눠 읽고, 다른 은행의 내 계좌를 가린다', () => {
+  // fixtures/bank-nh-html.xls는 농협 입출금거래내역조회 '엑셀 저장' 파일과 같은 모양(표 4개, 합친 칸, 칸 안 줄바꿈)에 가상 값을 넣은 것이다.
+  const rows = readHtmlTable(decodeText(readFileSync(new URL('./fixtures/bank-nh-html.xls', import.meta.url))));
+  assert.equal(detectKind(rows), 'bank');
+  const txs = importRows(rows, 'bank', { institution: '농협은행' });
+  assert.deepEqual(
+    txs.map((t) => [t.date, t.time, t.merchant, t.direction, t.amount, t.method]),
+    [
+      // 출금 칸의 음수는 체크카드 승인 취소다.
+      ['2026-10-28', '23:10:00', '카카오T택시', 'in', 4800, 'NH체크'],
+      ['2026-10-28', '23:05:12', '카카오T택시', 'out', 4800, 'NH체크'],
+      ['2026-10-25', '10:00:00', '(주)테크컴퍼니', 'in', 3200000, '타행이체'],
+      // 전각 공백(토뱅　홍길동)은 빈칸 하나로 읽는다.
+      ['2026-10-20', '12:00:00', '토뱅 홍길동 (내 계좌)', 'out', 100000, '실시간이체'],
+      ['2026-10-18', '09:00:00', '홍길동 (내 계좌)', 'in', 200000, 'PC신한은행'],
+      ['2026-10-15', '19:40:11', '김서연', 'out', 30000, 'NH콕송금'],
+      // 은행 이름이 아닌 말 뒤에 예금주 이름이 붙은 것(보험금 등)은 내 계좌가 아니다.
+      ['2026-10-12', '08:00:00', '삼성화홍길동', 'in', 50000, 'PC우리은행'],
+      ['2026-10-10', '07:00:00', '카뱅오픈홍길동 (내 계좌)', 'out', 50000, '타기관오픈'],
+      ['2026-10-06', '08:00:00', '카카오페이', 'out', 10000, '타기관오픈'],
+      ['2026-10-05', '09:12:03', '넷플릭스', 'out', 13500, 'NH체크'],
+    ],
+  );
+  assert.equal(txs[2].memo, '10월 급여');
+  assert.equal(exclusionReason(txs[3]), '내 계좌로 옮긴 돈');
+  assert.equal(exclusionReason(txs[7]), '내 계좌로 옮긴 돈');
+  assert.equal(exclusionReason(txs[9]), undefined);
+  // 농협은 계좌이체를 '실시간이체'·'NH콕송금'으로 적는다.
+  assert.equal(looksLikePersonalTransfer(txs[5]), true);
+  assert.equal(looksLikePersonalTransfer(txs[9]), false);
 });
