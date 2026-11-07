@@ -10,6 +10,7 @@ import { formatPeriod, formatShortPeriod } from '@/lib/format';
 import { uuid } from '@/lib/ids';
 import { Badge, Button, buttonClass, Card, ErrorBox, Loading, PageHeader, SectionTitle } from '@/components/ui';
 import { DemoButton } from '@/components/demo-button';
+import { MailImport } from '@/components/mail-import';
 
 interface Pending extends Omit<OpenedFile, 'kind'> {
   key: string;
@@ -185,7 +186,7 @@ export default function UploadPage() {
                             <option value="">골라 주세요</option>
                             {KINDS.map((k) => (
                               <option key={k} value={k}>
-                                {k === 'email' ? '메일 (가상 데이터 형식)' : `${KIND_LABEL[k]} 내역`}
+                                {k === 'email' ? '메일 (JSON 파일)' : `${KIND_LABEL[k]} 내역`}
                               </option>
                             ))}
                           </select>
@@ -247,6 +248,11 @@ export default function UploadPage() {
           </Card>
         )}
 
+        <SectionTitle>메일에서 영수증 가져오기</SectionTitle>
+        <Card>
+          <MailImport />
+        </Card>
+
         {snapshot.uploads.length > 0 && (
           <>
             <SectionTitle count={snapshot.uploads.length}>올린 파일</SectionTitle>
@@ -288,6 +294,7 @@ export default function UploadPage() {
             <li>· <b className="text-ink">통장</b>: 인터넷뱅킹 거래내역 조회에서 저장한 파일 (날짜, 금액, 내용 열이 있으면 돼요)</li>
             <li>· <b className="text-ink">카드</b>: 카드사 이용내역 (이용일자, 가맹점명, 이용금액)</li>
             <li>· <b className="text-ink">간편결제</b>: 카카오페이·네이버페이 결제내역이나 페이 머니 거래내역 (결제수단·은행 열로 어느 계좌·카드에서 나갔는지 맞춰요)</li>
+            <li>· <b className="text-ink">메일</b>: 위 &apos;메일에서 영수증 가져오기&apos;로 바로 가져와요. 컴퓨터에서 명령어로 받은 메일 JSON 파일도 올릴 수 있어요.</li>
           </ul>
           <p className="mt-3 text-xs text-faint">
             실제 파일로 확인한 형식: 토스뱅크 거래내역, 카카오페이 머니 거래내역, 농협 입출금거래내역조회 (엑셀). 은행·카드사마다 열 이름이 달라서, 읽지 못하는 파일이 있으면 머리글(첫 줄)을 알려 주세요. PDF는 읽지 못해요.

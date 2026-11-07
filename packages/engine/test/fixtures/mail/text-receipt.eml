@@ -1,0 +1,24 @@
+From: "OpenAI" <noreply@tm.openai.com>
+To: hong@example.com
+Subject: Your receipt from OpenAI #2001-0042
+Date: Mon, 19 Oct 2026 01:00:00 +0000
+MIME-Version: 1.0
+Content-Type: multipart/alternative; boundary="b1_alt"
+
+--b1_alt
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: 7bit
+
+Receipt from OpenAI
+Receipt #2001-0042
+Date paid: Oct 19, 2026
+
+ChatGPT Plus Subscription  Qty 1  $20.00
+Amount paid  $20.00
+View receipt: https://pay.example.com/r/abc
+
+--b1_alt
+Content-Type: text/html; charset=utf-8
+
+<html><body><p>Receipt from OpenAI</p><p>Amount paid $20.00</p></body></html>
+--b1_alt--

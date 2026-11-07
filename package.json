@@ -16,7 +16,8 @@
     "typecheck": "npm run typecheck --workspaces --if-present",
     "evaluate": "npm run evaluate -w @cashleak/engine",
     "generate": "npm run generate -w @cashleak/engine",
-    "detect": "npm run detect -w @cashleak/engine --"
+    "detect": "npm run detect -w @cashleak/engine --",
+    "fetch-mail": "npm run fetch-mail -w @cashleak/engine --"
   },
   "devDependencies": {
     "@types/node": "^22.20.5",
